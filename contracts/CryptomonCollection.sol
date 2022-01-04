@@ -13,5 +13,15 @@ contract CryptomonCollection is Ownable {
 
     MonCollection[] public monCollections;
 
-    function createMonCollection() private onlyOwner {}
+    function createMonCollection(
+        string[] memory _names,
+        string[] memory _images,
+        string memory _monType
+    ) private onlyOwner returns (uint256) {
+        monCollections.push(
+            MonCollection({names: _names, images: _images, monType: _monType})
+        );
+        uint256 collectionId = monCollections.length - 1;
+        return collectionId;
+    }
 }
