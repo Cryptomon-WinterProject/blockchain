@@ -14,11 +14,23 @@ contract CryptomonCollection is Ownable {
 
     MonCollection[] public monCollections;
 
+    function editMonCollection(
+        string[] memory _names,
+        string[] memory _images,
+        string memory _monType,
+        uint256 id
+    ) public onlyOwner {
+        monCollections[id].names = _names;
+        monCollections[id].images = _images;
+        monCollections[id].monType = _monType;
+        emit CollectionCreated(_names, _images, _monType);
+    }
+
     function createMonCollection(
         string[] memory _names,
         string[] memory _images,
         string memory _monType
-    ) public returns (uint256) {
+    ) public onlyOwner returns (uint256) {
         MonCollection memory monColl = MonCollection(
             new string[](0),
             new string[](0),
@@ -41,5 +53,25 @@ contract CryptomonCollection is Ownable {
         returns (MonCollection memory)
     {
         return monCollections[_index];
+    }
+
+    function getMonCollectionCount() public view returns (uint256) {
+        uint256 monCollectionsLength = monCollections.length;
+        return monCollectionsLength;
+    }
+
+    function deleteMonCollection(uint256 index)
+        public
+        onlyOwner
+        returns (MonCollection[] memory)
+    {
+        if (index >= monCollections.length) return monCollections;
+
+        for (uint256 i = index; i < monCollections.length - 1; i++) {
+            monCollections[i] = monCollections[i + 1];
+        }
+        delete monCollections[monCollections.length - 1];
+        monCollections.pop();
+        return monCollections;
     }
 }
