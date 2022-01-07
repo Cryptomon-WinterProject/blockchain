@@ -8,7 +8,7 @@ contract User is CryptomonCard {
     struct Player {
         string name;
         bool verified;
-        bool online;
+        bool availableForChallenge;
         uint256 winCount;
         uint256 lossCount;
         uint256 level;
@@ -25,7 +25,7 @@ contract User is CryptomonCard {
         Player memory user = Player({
             name: _name,
             verified: true,
-            online: false,
+            availableForChallenge: false,
             winCount: 0,
             lossCount: 0,
             level: 1,
@@ -43,7 +43,7 @@ contract User is CryptomonCard {
         onlyOwner
     {
         Player memory user = users[_userAddress];
-        user.online = _online;
+        user.availableForChallenge = _online;
         users[_userAddress] = user;
     }
 
@@ -56,7 +56,7 @@ contract User is CryptomonCard {
         for (uint256 index = 0; index < userAddresses.length; index++) {
             if (
                 users[userAddresses[index]].verified &&
-                users[userAddresses[index]].online
+                users[userAddresses[index]].availableForChallenge
             ) {
                 noOfReadyPlayers++;
             }
@@ -68,7 +68,7 @@ contract User is CryptomonCard {
         for (uint256 index = 0; index < userAddresses.length; index++) {
             if (
                 users[userAddresses[index]].verified &&
-                users[userAddresses[index]].online
+                users[userAddresses[index]].availableForChallenge
             ) {
                 challengeReadyPlayers[index] = userAddresses[index];
             }

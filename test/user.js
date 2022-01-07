@@ -30,19 +30,19 @@ contract("Battle", function ([owner, alice, bob]) {
   });
   it("owner should be able update connectivity status of users ", async () => {
     const aliceObj = await contractInstance.users(alice);
-    console.log(aliceObj.online);
-    assert.equal(aliceObj.online, false);
+    console.log(aliceObj.availableForChallenge);
+    assert.equal(aliceObj.availableForChallenge, false);
 
     await contractInstance.updateUserConnectivityStatus(alice, true, {
       from: owner,
     });
 
     const updatedAliceObj = await contractInstance.users(alice);
-    console.log(updatedAliceObj.online);
-    assert.equal(updatedAliceObj.online, true);
+    console.log(updatedAliceObj.availableForChallenge);
+    assert.equal(updatedAliceObj.availableForChallenge, true);
   });
 
-  it("should be able to get the online users data", async () => {
+  it("should be able to get the available users for challenge", async () => {
     await contractInstance.updateUserConnectivityStatus(alice, true, {
       from: owner,
     });
