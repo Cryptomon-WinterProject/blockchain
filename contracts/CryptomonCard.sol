@@ -25,7 +25,7 @@ contract CryptomonCard is CryptomonCollection {
     }
 
     function createCryptomonCard(uint256 _monIndex) public {
-        cryptomons.push(Cryptomon(_monIndex, 9, 1, 100, msg.sender));
+        cryptomons.push(Cryptomon(_monIndex, 1, 1, 0, msg.sender));
         emit LogCryptomonCard(msg.sender, _monIndex);
     }
 
