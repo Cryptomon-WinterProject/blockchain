@@ -7,7 +7,7 @@ contract("CryptomonCard", ([owner, alice]) => {
     contractInstance = await CryptomonCard.new({ from: alice });
   });
 
-  xit("should create a cryptomon card", async () => {
+  it("should create a cryptomon card", async () => {
     const { logs } = await contractInstance.createCryptomonCard(0, {
       from: alice,
     });
@@ -23,9 +23,16 @@ contract("CryptomonCard", ([owner, alice]) => {
     const names = ["pichu", "pikachu", "raichu"];
     const types = "hello";
     const photos = ["pichu", "pikachu", "raichu"];
-    await contractInstance.createMonCollection(names, photos, types, {
-      from: alice,
-    });
+    const trainingRate = 20;
+    await contractInstance.createMonCollection(
+      names,
+      photos,
+      types,
+      trainingRate,
+      {
+        from: alice,
+      }
+    );
 
     await contractInstance.createCryptomonCard(0, {
       from: alice,
