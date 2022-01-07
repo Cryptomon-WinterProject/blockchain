@@ -41,4 +41,14 @@ contract("Battle", function ([owner, alice, bob]) {
     console.log(updatedAliceObj.online);
     assert.equal(updatedAliceObj.online, true);
   });
+
+  it("should be able to get the online users data", async () => {
+    await contractInstance.updateUserConnectivityStatus(alice, true, {
+      from: owner,
+    });
+    const onlinePlayers = await contractInstance.getOnlinePlayers();
+    console.log(onlinePlayers);
+    assert.equal(onlinePlayers.length, 1);
+    assert.equal(onlinePlayers[0], alice);
+  });
 });

@@ -18,6 +18,8 @@ contract User is CryptomonCard {
     address[] public userAddresses;
     mapping(address => Player) public users;
 
+    // constructor() public {}
+
     //Temporary function to create a user
     function createTestReadyUser(string memory _name) public {
         Player memory user = Player({
@@ -44,5 +46,34 @@ contract User is CryptomonCard {
         user.online = _online;
         users[_userAddress] = user;
     }
-    // constructor() public {}
+
+    function getOnlinePlayers()
+        public
+        view
+        returns (address[] memory _players)
+    {
+        uint256 noOfReadyPlayers = 0;
+        for (uint256 index = 0; index < userAddresses.length; index++) {
+            if (
+                users[userAddresses[index]].verified &&
+                users[userAddresses[index]].online
+            ) {
+                noOfReadyPlayers++;
+            }
+        }
+
+        address[] memory challengeReadyPlayers = new address[](
+            noOfReadyPlayers
+        );
+        for (uint256 index = 0; index < userAddresses.length; index++) {
+            if (
+                users[userAddresses[index]].verified &&
+                users[userAddresses[index]].online
+            ) {
+                challengeReadyPlayers[index] = userAddresses[index];
+            }
+        }
+
+        return challengeReadyPlayers;
+    }
 }
