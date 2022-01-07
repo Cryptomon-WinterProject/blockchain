@@ -9,8 +9,14 @@ contract CryptomonCollection is Ownable {
         string[] names;
         string[] images;
         string monType;
+        uint8 trainingGainPerHour;
     }
-    event CollectionCreated(string[] names, string[] images, string monType);
+    event CollectionCreated(
+        string[] names,
+        string[] images,
+        string monType,
+        uint8 trainingGainPerHour
+    );
 
     MonCollection[] public monCollections;
 
@@ -18,23 +24,27 @@ contract CryptomonCollection is Ownable {
         string[] memory _names,
         string[] memory _images,
         string memory _monType,
+        uint8 _trainingGainPerHour,
         uint256 id
     ) public onlyOwner {
         monCollections[id].names = _names;
         monCollections[id].images = _images;
         monCollections[id].monType = _monType;
-        emit CollectionCreated(_names, _images, _monType);
+        monCollections[id].trainingGainPerHour = _trainingGainPerHour;
+        emit CollectionCreated(_names, _images, _monType, _trainingGainPerHour);
     }
 
     function createMonCollection(
         string[] memory _names,
         string[] memory _images,
-        string memory _monType
+        string memory _monType,
+        uint8 _trainingGainPerHour
     ) public onlyOwner returns (uint256) {
         MonCollection memory monColl = MonCollection(
             new string[](0),
             new string[](0),
-            new string(0)
+            new string(0),
+            0
         );
         monCollections.push(monColl);
         uint256 collectionId = monCollections.length - 1;
@@ -43,7 +53,8 @@ contract CryptomonCollection is Ownable {
             monCollections[collectionId].images.push(_images[i]);
         }
         monCollections[collectionId].monType = _monType;
-        emit CollectionCreated(_names, _images, _monType);
+        monCollections[collectionId].trainingGainPerHour = _trainingGainPerHour;
+        emit CollectionCreated(_names, _images, _monType, _trainingGainPerHour);
         return collectionId;
     }
 
