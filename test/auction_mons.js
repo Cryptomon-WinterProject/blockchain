@@ -1,10 +1,10 @@
-const auction_mons = artifacts.require("AuctionMons");
+const AuctionMons = artifacts.require("AuctionMons");
 
-contract("auction_mons", function ([owner, alice, bob]) {
+contract("AuctionMons", function ([owner, alice, bob]) {
   let contractInstance;
 
   beforeEach(async () => {
-    contractInstance = await auction_mons.new({ from: owner });
+    contractInstance = await AuctionMons.new({ from: owner });
   });
 
   it("should add cards in auctions", async () => {
