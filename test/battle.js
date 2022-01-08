@@ -1,7 +1,8 @@
 const Battle = artifacts.require("Battle");
 const { soliditySha3 } = require("web3-utils");
+const utils = require("./helpers/utils");
 
-contract("Battle", function ([owner, alice, bob]) {
+contract("Battle", function ([owner, alice, bob, joe]) {
   const monCollections = Array(5)
     .fill({})
     .map((_, i) => {
@@ -65,36 +66,40 @@ contract("Battle", function ([owner, alice, bob]) {
       console.log(challenge);
       assert.equal(challenge, true);
 
-      const monsInBattle = await contractInstance.getMonsInBattle(challengeHash);
+      const monsInBattle = await contractInstance.getMonsInBattle(
+        challengeHash
+      );
       console.log(monsInBattle);
       // assert.equal(monsInBattle.challengerMons, [0, 1, 2]);
     });
 
-    xit("does not allow challenging unverified or non-challengeReady players", async () => {
-      await utils.shouldThrow(
-        contractInstance.challenge(misty, 0, { from: alice })
-      );
-
-      await contractInstance.setChallengeReady({ from: alice });
+    it("does not allow challenging unverified or non-challengeReady players", async () => {
+      await contractInstance.updateUserConnectivityStatus(alice, false, {
+        from: owner,
+      });
 
       await utils.shouldThrow(
-        contractInstance.challenge(misty, 0, { from: alice })
-      );
-      await utils.shouldThrow(
-        contractInstance.challenge(brok, 0, { from: alice })
+        contractInstance.challenge(bob, [0, 1, 2], { from: alice })
       );
 
       await utils.shouldThrow(
-        contractInstance.challenge(alice, 0, { from: brok })
+        contractInstance.challenge(alice, [5, 6, 7], { from: bob })
+      );
+
+      await utils.shouldThrow(
+        contractInstance.challenge(joe, [5, 6, 7], { from: bob })
+      );
+
+      await utils.shouldThrow(
+        contractInstance.challenge(bob, [5, 6, 7], { from: joe })
       );
     });
 
-    xit("does not allow players to challenge with cryptoMons they don't own", async () => {
-      await contractInstance.setChallengeReady({ from: alice });
-      await contractInstance.setChallengeReady({ from: misty });
-
+    it("does not allow players to challenge with cryptoMons they don't own", async () => {
       await utils.shouldThrow(
-        contractInstance.challenge(misty, 2, { from: alice })
+        contractInstance.challenge(bob, [9, 8, 7], {
+          from: alice,
+        })
       );
     });
   });
