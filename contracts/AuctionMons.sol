@@ -36,4 +36,8 @@ contract AuctionMons is CryptomonCard {
         cardToOwner[_cryptomonCardIndex] = msg.sender;
         emit AuctionCreated(_cryptomonCardIndex, _minAmount);
     }
+
+    function auctionCart() public view returns (AuctionCard[] memory) {
+        return auctionCards;
+    }
 }
