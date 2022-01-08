@@ -18,6 +18,11 @@ contract User is CryptomonCard {
     address[] public userAddresses;
     mapping(address => Player) public users;
 
+    modifier onlyVerifiedUser(address _player) {
+        require(users[_player].verified, "Player not verified!");
+        _;
+    }
+
     // constructor() public {}
 
     //Temporary function to create a user
@@ -41,6 +46,7 @@ contract User is CryptomonCard {
     function updateUserConnectivityStatus(address _userAddress, bool _online)
         external
         onlyOwner
+        onlyVerifiedUser(_userAddress)
     {
         Player memory user = users[_userAddress];
         user.availableForChallenge = _online;

@@ -27,11 +27,6 @@ contract Battle is User {
     );
     event AnnounceWinner(bytes32 _challengeHash, uint256 _winnerMon);
 
-    modifier onlyVerifiedUser(address _player) {
-        require(users[_player].verified, "Player not verified!");
-        _;
-    }
-
     modifier onlyOnlinePlayer(address _player) {
         require(
             users[_player].availableForChallenge,
@@ -43,7 +38,7 @@ contract Battle is User {
     modifier onlyAvailableMons(uint256[] memory _monIds) {
         for (uint256 i = 0; i < _monIds.length; i++) {
             require(
-                cryptomons[i].owner == msg.sender,
+                cryptomons[_monIds[i]].owner == msg.sender,
                 "You don't own this mon!"
             );
             // commented out because available is not implemented yet in the contract cryptomons
@@ -61,7 +56,7 @@ contract Battle is User {
     }
 
     function challenge(address _opponent, uint256[] memory _monIds)
-        public
+        external
         onlyOnlinePlayer(msg.sender)
         onlyOnlinePlayer(_opponent)
         onlyAvailableMons(_monIds)
