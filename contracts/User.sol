@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "./CryptomonCard.sol";
+import "./Training.sol";
 
-contract User is CryptomonCard {
+contract User is Training {
     // Temporary structure for player
     struct Player {
         string name;
@@ -13,6 +13,7 @@ contract User is CryptomonCard {
         uint256 lossCount;
         uint256 level;
         uint256 xp;
+        uint256 monCoinBalance;
     }
 
     address[] public userAddresses;
@@ -34,7 +35,8 @@ contract User is CryptomonCard {
             winCount: 0,
             lossCount: 0,
             level: 1,
-            xp: 0
+            xp: 0,
+            monCoinBalance: 0
         });
         userAddresses.push(msg.sender);
         users[msg.sender] = user;
