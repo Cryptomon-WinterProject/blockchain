@@ -6,7 +6,7 @@ import "./AuctionMons.sol";
 
 contract Auction is AuctionMons {
     mapping(address => uint256) MonCoins;
-    address owner;
+    address cardOwner;
 
     event NewBid(uint256 _cardIndex, address _bidder, uint256 _bidAmount);
 
