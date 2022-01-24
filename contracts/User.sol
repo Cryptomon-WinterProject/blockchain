@@ -7,6 +7,7 @@ contract User is Training {
     // Temporary structure for player
     struct Player {
         string name;
+        string profilePictureURL;
         bool verified;
         bool availableForChallenge;
         uint256 winCount;
@@ -18,7 +19,6 @@ contract User is Training {
 
     address[] public userAddresses;
     mapping(address => Player) public users;
-    mapping(address => uint256[]) public cardOwnedByUser;
 
     modifier onlyVerifiedUser(address _player) {
         require(users[_player].verified, "Player not verified!");
@@ -28,6 +28,7 @@ contract User is Training {
     function createTestReadyUser(string memory _name) public {
         Player memory user = Player({
             name: _name,
+            profilePictureURL: "",
             verified: true,
             availableForChallenge: false,
             winCount: 0,
@@ -41,7 +42,6 @@ contract User is Training {
         for (uint256 i = 0; i < 5; i++) {
             // Random number to allot cryptomon card
             createCryptomonCard(i);
-            cardOwnedByUser[msg.sender].push(cryptomons.length + i);
         }
     }
 
