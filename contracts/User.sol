@@ -18,15 +18,13 @@ contract User is Training {
 
     address[] public userAddresses;
     mapping(address => Player) public users;
+    mapping(address => uint256[]) public cardOwnedByUser;
 
     modifier onlyVerifiedUser(address _player) {
         require(users[_player].verified, "Player not verified!");
         _;
     }
 
-    // constructor() public {}
-
-    //Temporary function to create a user
     function createTestReadyUser(string memory _name) public {
         Player memory user = Player({
             name: _name,
@@ -41,7 +39,9 @@ contract User is Training {
         userAddresses.push(msg.sender);
         users[msg.sender] = user;
         for (uint256 i = 0; i < 5; i++) {
+            // Random number to allot cryptomon card
             createCryptomonCard(i);
+            cardOwnedByUser[msg.sender].push(cryptomons.length + i);
         }
     }
 
