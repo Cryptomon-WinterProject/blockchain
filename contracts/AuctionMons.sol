@@ -2,25 +2,23 @@
 pragma solidity >=0.4.22 <0.9.0;
 pragma experimental ABIEncoderV2;
 
-import "./CryptomonCard.sol";
+import "./Battle.sol";
 
-contract AuctionMons is CryptomonCard {
+contract AuctionMons is Battle {
     uint256 public endTime = block.timestamp + 1 days;
 
     struct AuctionCard {
-        uint256 cryptomonCardIndex;
         uint256 minAmount;
         uint256 highestBid;
         address highestBidder;
     }
-    AuctionCard[] public auctionCards;
+
+    mapping(uint256 => AuctionCard) public auctionCards;
 
     modifier beforeEndTime() {
         require(block.timestamp < endTime);
         _;
     }
-    mapping(address => uint256) public ownerCardIndex;
-    mapping(uint256 => address) public cardToOwner;
 
     //  Cryptomon public card1 = cryptomons[auctionCards[0].cryptomonCardIndex];
     event AuctionCreated(uint256 _cardIndex, uint256 _minAmount);
@@ -29,15 +27,8 @@ contract AuctionMons is CryptomonCard {
         public
         beforeEndTime
     {
-        auctionCards.push(
-            AuctionCard(_cryptomonCardIndex, _minAmount, 0, address(0))
-        );
-        ownerCardIndex[msg.sender] = _cryptomonCardIndex;
-        cardToOwner[_cryptomonCardIndex] = msg.sender;
+        AuctionCard memory auctionCard = AuctionCard(_minAmount, 0, address(0));
+        auctionCards[_cryptomonCardIndex] = auctionCard;
         emit AuctionCreated(_cryptomonCardIndex, _minAmount);
-    }
-
-    function auctionCart() public view returns (AuctionCard[] memory) {
-        return auctionCards;
     }
 }
