@@ -45,6 +45,24 @@ contract User is Training {
         }
     }
 
+    function getUserCards() public view returns (Cryptomon[] memory) {
+        uint256 numCards = 0;
+        for (uint256 i = 0; i < cryptomons.length; i++) {
+            if (cryptomons[i].owner == msg.sender) {
+                numCards++;
+            }
+        }
+        Cryptomon[] memory cards = new Cryptomon[](numCards);
+        uint8 index = 0;
+        for (uint256 i = 0; i < cryptomons.length; i++) {
+            if (cryptomons[i].owner == msg.sender) {
+                cards[index] = cryptomons[i];
+                index++;
+            }
+        }
+        return cards;
+    }
+
     function updateUserConnectivityStatus(address _userAddress, bool _online)
         external
         onlyOwner
@@ -53,6 +71,11 @@ contract User is Training {
         Player memory user = users[_userAddress];
         user.availableForChallenge = _online;
         users[_userAddress] = user;
+    }
+
+    function buyMonCoins() public payable {
+        require(msg.value % 1000 == 0, "Amount must be in multiples of 1000");
+        users[msg.sender].monCoinBalance += msg.value / 1000;
     }
 
     function getOnlinePlayers()
