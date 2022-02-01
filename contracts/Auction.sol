@@ -13,7 +13,8 @@ contract Auction is AuctionMons {
     function bid(uint256 _cardIndex) public payable beforeEndTime {
         require(
             monCoinBid[msg.sender] + msg.value >
-                auctionCards[_cardIndex].highestBid
+                auctionCards[_cardIndex].highestBid &&
+                users[msg.sender].monCoinBalance >= msg.value
         );
         auctionCards[_cardIndex].highestBidder = msg.sender;
         auctionCards[_cardIndex].highestBid =
@@ -24,12 +25,13 @@ contract Auction is AuctionMons {
         emit NewBid(_cardIndex, msg.sender, msg.value);
     }
 
-    function getBidAmount(uint256 amount) public payable {
-        require(msg.value == amount);
-    }
-
-    function storeBidAmount() public payable {
-        address payable add1 = payable(msg.sender);
-        add1.transfer(address(this).balance);
+    function transferAuctionAmount(address _to, address _from) public {
+        require(
+            monCoinBid[_from] <= users[_from].monCoinBalance &&
+                monCoinBid[_from] > 0
+        );
+        users[_to].monCoinBalance += monCoinBid[_from];
+        users[_from].monCoinBalance -= monCoinBid[_from];
+        monCoinBid[_from] = 0;
     }
 }
