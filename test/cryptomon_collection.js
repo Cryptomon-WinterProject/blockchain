@@ -10,12 +10,14 @@ contract("CryptomonCollection", ([owner, alice, bob, ash]) => {
   it("should create a cryptomon collection", async () => {
     const names = ["Cryptomon1", "Cryptomon2", "Cryptomon3"];
     const types = "hello";
+    const prices = [1, 2, 3];
     const photos = ["photo1", "photo2", "photo3"];
     const trainingRate = 20;
 
     const { logs } = await contractInstance.createMonCollection(
       names,
       photos,
+      prices,
       types,
       trainingRate,
       {
@@ -38,11 +40,13 @@ contract("CryptomonCollection", ([owner, alice, bob, ash]) => {
     let names = ["Cryptomon1", "Cryptomon2", "Cryptomon3"];
     const types = "hello";
     let photos = ["photo1", "photo2", "photo3"];
+    let prices = [1, 2, 3];
     let trainingRate = 20;
 
     await contractInstance.createMonCollection(
       names,
       photos,
+      prices,
       types,
       trainingRate,
       {
@@ -57,11 +61,13 @@ contract("CryptomonCollection", ([owner, alice, bob, ash]) => {
 
     names[0] = "Cryptomon4";
     photos[0] = "photo4";
+    prices[0] = 4;
     trainingRate = 30;
 
     await contractInstance.editMonCollection(
       names,
       photos,
+      prices,
       types,
       trainingRate,
       0,
@@ -73,18 +79,27 @@ contract("CryptomonCollection", ([owner, alice, bob, ash]) => {
     const getUpdatedMonById = await contractInstance.getMonCollection(0);
     assert.equal(getUpdatedMonById.names[0], "Cryptomon4");
     assert.equal(getUpdatedMonById.images[0], "photo4");
+    assert.equal(getUpdatedMonById.prices[0], 4);
     assert.equal(getUpdatedMonById.trainingGainPerHour, trainingRate);
   });
 
-  xit("should delete a cryptomon collection", async () => {
+  it("should delete a cryptomon collection", async () => {
     let names = ["Cryptomon1", "Cryptomon2", "Cryptomon3"];
-    const types = "hello";
     let photos = ["photo1", "photo2", "photo3"];
+    let prices = [1, 2, 3];
+    let trainingRate = 20;
 
     for (let i = 0; i < 2; i++) {
-      await contractInstance.createMonCollection(names, photos, `${i}`, {
-        from: ash,
-      });
+      await contractInstance.createMonCollection(
+        names,
+        photos,
+        prices,
+        `${i}`,
+        trainingRate,
+        {
+          from: ash,
+        }
+      );
     }
 
     let monCollectionsLength = await contractInstance.getMonCollectionCount();

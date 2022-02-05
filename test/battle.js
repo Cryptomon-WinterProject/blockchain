@@ -9,7 +9,9 @@ contract("Battle", function ([owner, alice, bob, joe]) {
       return {
         names: [`Cryptomon${i}`, `Cryptomon${i}`, `Cryptomon${i}`],
         images: [`photo${i}`, `photo${i}`, `photo${i}`],
+        prices: [i, i + 1, i + 2],
         monType: i,
+        trainingRate: i * 20,
       };
     });
 
@@ -19,7 +21,9 @@ contract("Battle", function ([owner, alice, bob, joe]) {
       await contractInstance.createMonCollection(
         monCollections[i].names,
         monCollections[i].images,
+        monCollections[i].prices,
         monCollections[i].monType,
+        monCollections[i].trainingRate,
         {
           from: owner,
         }

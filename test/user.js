@@ -1,6 +1,7 @@
 const User = artifacts.require("User");
 
 contract("Battle", function ([owner, alice, bob]) {
+  let contractInstance;
   const monCollections = Array(5)
     .fill({})
     .map((_, i) => {
@@ -8,6 +9,8 @@ contract("Battle", function ([owner, alice, bob]) {
         names: [`Cryptomon${i}`, `Cryptomon${i}`, `Cryptomon${i}`],
         images: [`photo${i}`, `photo${i}`, `photo${i}`],
         monType: i,
+        prices: [i, i + 1, i + 2],
+        trainingRate: i * 20,
       };
     });
 
@@ -17,7 +20,9 @@ contract("Battle", function ([owner, alice, bob]) {
       await contractInstance.createMonCollection(
         monCollections[i].names,
         monCollections[i].images,
+        monCollections[i].prices,
         monCollections[i].monType,
+        monCollections[i].trainingRate,
         {
           from: owner,
         }
@@ -28,7 +33,7 @@ contract("Battle", function ([owner, alice, bob]) {
       from: alice,
     });
   });
-  it("owner should be able update connectivity status of users ", async () => {
+  xit("owner should be able update connectivity status of users ", async () => {
     const aliceObj = await contractInstance.users(alice);
     console.log(aliceObj.availableForChallenge);
     assert.equal(aliceObj.availableForChallenge, false);
@@ -42,7 +47,7 @@ contract("Battle", function ([owner, alice, bob]) {
     assert.equal(updatedAliceObj.availableForChallenge, true);
   });
 
-  it("should be able to get the available users for challenge", async () => {
+  xit("should be able to get the available users for challenge", async () => {
     await contractInstance.updateUserConnectivityStatus(alice, true, {
       from: owner,
     });
@@ -50,5 +55,12 @@ contract("Battle", function ([owner, alice, bob]) {
     console.log(onlinePlayers);
     assert.equal(onlinePlayers.length, 1);
     assert.equal(onlinePlayers[0], alice);
+  });
+
+  it("should be able to fetch his cards", async () => {
+    const userCards = await contractInstance.getUserCards({
+      from: alice,
+    });
+    console.log(userCards);
   });
 });

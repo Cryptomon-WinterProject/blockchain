@@ -23,10 +23,12 @@ contract("CryptomonCard", ([owner, alice]) => {
     const names = ["pichu", "pikachu", "raichu"];
     const types = "hello";
     const photos = ["pichu", "pikachu", "raichu"];
+    const prices = [1, 2, 3];
     const trainingRate = 20;
     await contractInstance.createMonCollection(
       names,
       photos,
+      prices,
       types,
       trainingRate,
       {
