@@ -25,7 +25,7 @@ async function fetchAllPokemon() {
     pokedatabse.push(obj);
   }
 
-  for (i = 18 ; i < 28; i = i + 2) {
+  for (i = 18; i < 28; i = i + 2) {
     let obj = {
       name: [pokemonDb[i].name, pokemonDb[i + 1].name],
       image: [pokemonDb[i].image, pokemonDb[i + 1].image],
@@ -35,15 +35,15 @@ async function fetchAllPokemon() {
     pokedatabse.push(obj);
   }
 
-   for (i = 34; i < 42; i = i + 2) {
-     let obj = {
-       name: [pokemonDb[i].name, pokemonDb[i + 1].name],
-       image: [pokemonDb[i].image, pokemonDb[i + 1].image],
-       id: [pokemonDb[i].id, pokemonDb[i + 1].id],
-       type: pokemonDb[i].type,
-     };
-     pokedatabse.push(obj);
-   }
+  for (i = 34; i < 42; i = i + 2) {
+    let obj = {
+      name: [pokemonDb[i].name, pokemonDb[i + 1].name],
+      image: [pokemonDb[i].image, pokemonDb[i + 1].image],
+      id: [pokemonDb[i].id, pokemonDb[i + 1].id],
+      type: pokemonDb[i].type,
+    };
+    pokedatabse.push(obj);
+  }
 
   console.log(pokedatabse);
 }
@@ -69,3 +69,24 @@ async function fetchPokemonData(pokemon) {
 }
 
 fetchAllPokemon();
+
+async function fetchdamage() {
+  let type = await fetch(`https://pokeapi.co/api/v2/type/`);
+  type = await type.json();
+
+  let damageType = [];
+
+  for (let i = 1; i <= 18; i++) {
+    let damage = await fetch(`https://pokeapi.co/api/v2/type/${i}/`);
+    damage = await damage.json();
+    let obj = {
+      type: type.results[i - 1].name,
+      advantageAgainst: damage.damage_relations.double_damage_from,
+    };
+
+    damageType.push(obj);
+  }
+  console.log(damageType);
+}
+
+fetchdamage();
