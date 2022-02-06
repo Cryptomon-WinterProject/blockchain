@@ -10,4 +10,8 @@ contract Helper {
         return (keccak256(abi.encodePacked((a))) ==
             keccak256(abi.encodePacked((b))));
     }
+
+    function exponential(uint256 a) public pure returns (uint256) {
+        return (11 * a) / (4 * a);
+    }
 }
