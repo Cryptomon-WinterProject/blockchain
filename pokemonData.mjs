@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 const pokemonDb = [];
 
 async function fetchAllPokemon() {
@@ -11,7 +12,7 @@ async function fetchAllPokemon() {
   // console.log(pokemonDb);
 
   const pokedatabse = [];
-  for (i = 0; i < 18; i = i + 3) {
+  for (let i = 0; i < 18; i += 3) {
     let obj = {
       name: [pokemonDb[i].name, pokemonDb[i + 1].name, pokemonDb[i + 2].name],
       image: [
@@ -25,7 +26,7 @@ async function fetchAllPokemon() {
     pokedatabse.push(obj);
   }
 
-  for (i = 18; i < 28; i = i + 2) {
+  for (let i = 18; i < 28; i = i + 2) {
     let obj = {
       name: [pokemonDb[i].name, pokemonDb[i + 1].name],
       image: [pokemonDb[i].image, pokemonDb[i + 1].image],
@@ -35,7 +36,7 @@ async function fetchAllPokemon() {
     pokedatabse.push(obj);
   }
 
-  for (i = 34; i < 42; i = i + 2) {
+  for (let i = 34; i < 42; i = i + 2) {
     let obj = {
       name: [pokemonDb[i].name, pokemonDb[i + 1].name],
       image: [pokemonDb[i].image, pokemonDb[i + 1].image],
