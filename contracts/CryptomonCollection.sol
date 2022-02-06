@@ -3,8 +3,9 @@ pragma solidity >=0.4.22 <0.9.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Helper.sol";
 
-contract CryptomonCollection is Ownable {
+contract CryptomonCollection is Ownable, Helper {
     struct MonCollection {
         string[] names;
         string[] images;
