@@ -11,7 +11,11 @@ contract Battle is User {
         uint256[] opponentMons;
     }
 
-    mapping(bytes32 => bool) public ongoingChallenges;
+    mapping(bytes32 => uint8) public challengeStatus;
+    // 0 -> non going on OR settled battle
+    // 1 -> Challanged but not yet accepted
+    // 2 -> Challanged, accepted and ongoing
+
     mapping(bytes32 => BattlingMons) internal monsInBattle;
 
     event ChallengeReady(address _player);
@@ -22,8 +26,8 @@ contract Battle is User {
     );
     event AcceptChallenge(
         bytes32 _challengeHash,
-        uint256 _challengerMon,
-        uint256 _opponentMon
+        uint256[] _challengerMons,
+        uint256[] _opponentMons
     );
     event AnnounceWinner(bytes32 _challengeHash, uint256 _winnerMon);
 
@@ -65,7 +69,7 @@ contract Battle is User {
             abi.encodePacked(msg.sender, _opponent)
         );
 
-        ongoingChallenges[challengeHash] = true;
+        challengeStatus[challengeHash] = 1;
 
         BattlingMons memory mons = BattlingMons({
             challengerMons: _monIds,
@@ -79,7 +83,28 @@ contract Battle is User {
         emit NewChallenge(msg.sender, _opponent, _monIds);
     }
 
-    function accept(address _challenger, uint256 _monId) public {}
+    function acceptChallenge(address _challenger, uint256[] memory _monIds)
+        external
+        onlyOnlinePlayer(msg.sender)
+        onlyAvailableMons(_monIds)
+    {
+        bytes32 challengeHash = keccak256(
+            abi.encodePacked(_challenger, msg.sender)
+        );
+        require(
+            challengeStatus[challengeHash] == 1,
+            "Challenge does not exist"
+        );
+
+        challengeStatus[challengeHash] = 2;
+
+        BattlingMons storage mons = monsInBattle[challengeHash];
+
+        mons.opponentMons = _monIds;
+        users[_challenger].availableForChallenge = false;
+
+        emit AcceptChallenge(challengeHash, mons.challengerMons, _monIds);
+    }
 
     function settleChallenge(bytes32 _challengeHash, uint8 _randomNumber)
         public

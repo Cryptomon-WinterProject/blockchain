@@ -52,29 +52,26 @@ contract("Battle", function ([owner, alice, bob, joe]) {
         from: alice,
       });
 
-      console.log(logs[0].args);
-      console.log(logs[0].args._monIds);
-
       assert.equal(logs[0].args._challenger, alice);
       assert.equal(logs[0].args._opponent, bob);
-      // assert.equal(logs[0].args._monIds, [0, 1, 2]);
+
+      for (let i = 0; i < 3; i++) {
+        assert.equal(logs[0].args._monIds[i], i);
+      }
 
       const aliceObject = await contractInstance.users(alice);
-      console.log(aliceObject);
       assert.equal(aliceObject.availableForChallenge, false);
 
       const challengeHash = soliditySha3(alice, bob);
-      console.log(challengeHash);
-
-      const challenge = await contractInstance.ongoingChallenges(challengeHash);
-      console.log(challenge);
-      assert.equal(challenge, true);
+      const challenge = await contractInstance.challengeStatus(challengeHash);
+      assert.equal(challenge, 1);
 
       const monsInBattle = await contractInstance.getMonsInBattle(
         challengeHash
       );
-      console.log(monsInBattle);
-      // assert.equal(monsInBattle.challengerMons, [0, 1, 2]);
+      for (let i = 0; i < 3; i++) {
+        assert.equal(monsInBattle.challengerMons[i], i);
+      }
     });
 
     it("does not allow challenging unverified or non-challengeReady players", async () => {
@@ -105,6 +102,42 @@ contract("Battle", function ([owner, alice, bob, joe]) {
           from: alice,
         })
       );
+    });
+  });
+
+  context("accept challenges", async () => {
+    it("allows players to accept challenges", async () => {
+      const { logs } = await contractInstance.challenge(bob, [0, 1, 2], {
+        from: alice,
+      });
+
+      const challengeHash = soliditySha3(alice, bob);
+
+      const challenge = await contractInstance.challengeStatus(challengeHash);
+      assert.equal(challenge, 1);
+
+      const monsInBattle = await contractInstance.getMonsInBattle(
+        challengeHash
+      );
+
+      const { logs: logs2 } = await contractInstance.acceptChallenge(
+        alice,
+        [5, 6, 7],
+        {
+          from: bob,
+        }
+      );
+
+      for (let index = 0; index < 3; index++) {
+        assert.equal(logs2[0].args._challengerMons[index], index);
+        assert.equal(logs2[0].args._opponentMons[index], index + 5);
+      }
+
+      const hashRecieved = logs2[0].args._challengeHash;
+      assert.equal(hashRecieved, challengeHash);
+
+      const challenge2 = await contractInstance.challengeStatus(hashRecieved);
+      assert.equal(challenge2, 2);
     });
   });
 });
