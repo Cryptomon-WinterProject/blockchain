@@ -246,7 +246,7 @@ contract Battle is User {
                     challengerMons[index]
                 );
                 increaseXP(battleMons.challengerMons[index], monWinXPIncrease);
-                emit AnnounceRoundWinner(_challengeHash, _winner, _xpGained);
+                // emit AnnounceRoundWinner(_challengeHash, _winner, _xpGained);
             } else {
                 increaseXP(
                     battleMons.opponentMons[index],
