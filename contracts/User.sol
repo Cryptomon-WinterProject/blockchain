@@ -15,6 +15,8 @@ contract User is Training {
         uint256 level;
         uint256 xp;
         uint256 monCoinBalance;
+        uint256 winStreak;
+        uint256 lossStreak;
     }
 
     address[] public userAddresses;
@@ -35,7 +37,9 @@ contract User is Training {
             lossCount: 0,
             level: 1,
             xp: 0,
-            monCoinBalance: 0
+            monCoinBalance: 0,
+            winStreak: 0,
+            lossStreak: 0
         });
         userAddresses.push(msg.sender);
         users[msg.sender] = user;
