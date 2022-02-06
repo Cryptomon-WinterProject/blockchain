@@ -40,6 +40,10 @@ contract CryptomonCard is CryptomonCollection {
         return cryptomons[_monId];
     }
 
+    function calcXPRange(uint16 monLevel) internal pure returns (uint16) {
+        return 80 + monLevel * 20;
+    }
+
     function increaseXP(uint256 _monId, uint16 _XPToIncrease)
         public
         checkCardOwner(_monId)
@@ -49,7 +53,8 @@ contract CryptomonCard is CryptomonCollection {
             monCollections[cryptomons[_monId].monIndex].names.length
         );
         XP = XP + _XPToIncrease;
-        uint16 rangeOfXP = 80 + uint16(cryptomons[_monId].monLevel) * 20;
+        // uint16 rangeOfXP = 80 + uint16(cryptomons[_monId].monLevel) * 20;
+        uint16 rangeOfXP = calcXPRange(uint16(cryptomons[_monId].monLevel));
         if (XP >= rangeOfXP) {
             XP = XP - rangeOfXP;
             cryptomons[_monId].monLevel = cryptomons[_monId].monLevel + 1;
