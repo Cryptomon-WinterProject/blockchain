@@ -82,7 +82,9 @@ async function fetchdamage() {
     damage = await damage.json();
     let obj = {
       type: type.results[i - 1].name,
-      advantageAgainst: damage.damage_relations.double_damage_from,
+      advantageAgainst: damage.damage_relations.double_damage_from.map(
+        (el) => el.name
+      ),
     };
 
     damageType.push(obj);
