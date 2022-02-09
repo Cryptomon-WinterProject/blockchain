@@ -8,7 +8,7 @@ contract CryptomonCollection is CryptomonType {
     struct MonCollection {
         string[] names;
         string[] images;
-        uint256[] prices;
+        uint256 price;
         string monType;
         uint8 trainingGainPerHour;
     }
@@ -24,14 +24,14 @@ contract CryptomonCollection is CryptomonType {
     function editMonCollection(
         string[] memory _names,
         string[] memory _images,
-        uint256[] memory _prices,
+        uint256 _price,
         string memory _monType,
         uint8 _trainingGainPerHour,
         uint256 id
     ) public onlyOwner {
         monCollections[id].names = _names;
         monCollections[id].images = _images;
-        monCollections[id].prices = _prices;
+        monCollections[id].price = _price;
         monCollections[id].monType = _monType;
         monCollections[id].trainingGainPerHour = _trainingGainPerHour;
         emit CollectionCreated(_names, _images, _monType, _trainingGainPerHour);
@@ -40,14 +40,14 @@ contract CryptomonCollection is CryptomonType {
     function createMonCollection(
         string[] memory _names,
         string[] memory _images,
-        uint256[] memory _prices,
+        uint256 _price,
         string memory _monType,
         uint8 _trainingGainPerHour
     ) public onlyOwner returns (uint256) {
         MonCollection memory monColl = MonCollection(
             new string[](0),
             new string[](0),
-            new uint256[](0),
+            0,
             new string(0),
             0
         );
@@ -56,8 +56,8 @@ contract CryptomonCollection is CryptomonType {
         for (uint256 i = 0; i < _names.length; i++) {
             monCollections[collectionId].names.push(_names[i]);
             monCollections[collectionId].images.push(_images[i]);
-            monCollections[collectionId].prices.push(_prices[i]);
         }
+        monCollections[collectionId].price = _price;
         monCollections[collectionId].monType = _monType;
         monCollections[collectionId].trainingGainPerHour = _trainingGainPerHour;
         emit CollectionCreated(_names, _images, _monType, _trainingGainPerHour);

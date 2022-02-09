@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 const pokemonDb = [];
+let damageType = {};
 
 async function fetchAllPokemon() {
   let allpokemon = await fetch("https://pokeapi.co/api/v2/pokemon?limit=50");
@@ -14,34 +15,40 @@ async function fetchAllPokemon() {
   const pokedatabse = [];
   for (let i = 0; i < 18; i += 3) {
     let obj = {
-      name: [pokemonDb[i].name, pokemonDb[i + 1].name, pokemonDb[i + 2].name],
-      image: [
+      names: [pokemonDb[i].name, pokemonDb[i + 1].name, pokemonDb[i + 2].name],
+      images: [
         pokemonDb[i].image,
         pokemonDb[i + 1].image,
         pokemonDb[i + 2].image,
       ],
-      id: [pokemonDb[i].id, pokemonDb[i + 1].id, pokemonDb[i + 2].id],
-      type: pokemonDb[i].type,
+      price: Math.floor(Math.random() * 50 + 1),
+      monType: pokemonDb[i].type,
+      trainingGainPerHour:
+        25 -
+        Math.floor(Math.random() * (5 - damageType[pokemonDb[i].type].length)),
+      // trainingGainPerHour: 15 + Math.floor(Math.random() * 10 + 1),
     };
     pokedatabse.push(obj);
   }
 
   for (let i = 18; i < 28; i = i + 2) {
     let obj = {
-      name: [pokemonDb[i].name, pokemonDb[i + 1].name],
-      image: [pokemonDb[i].image, pokemonDb[i + 1].image],
-      id: [pokemonDb[i].id, pokemonDb[i + 1].id],
-      type: pokemonDb[i].type,
+      names: [pokemonDb[i].name, pokemonDb[i + 1].name],
+      images: [pokemonDb[i].image, pokemonDb[i + 1].image],
+      price: Math.floor(Math.random() * 50 + 1),
+      monType: pokemonDb[i].type,
+      trainingGainPerHour: 15 + Math.floor(Math.random() * 10 + 1),
     };
     pokedatabse.push(obj);
   }
 
   for (let i = 34; i < 42; i = i + 2) {
     let obj = {
-      name: [pokemonDb[i].name, pokemonDb[i + 1].name],
-      image: [pokemonDb[i].image, pokemonDb[i + 1].image],
-      id: [pokemonDb[i].id, pokemonDb[i + 1].id],
-      type: pokemonDb[i].type,
+      names: [pokemonDb[i].name, pokemonDb[i + 1].name],
+      images: [pokemonDb[i].image, pokemonDb[i + 1].image],
+      price: Math.floor(Math.random() * 50 + 1),
+      monType: pokemonDb[i].type,
+      trainingGainPerHour: 15 + Math.floor(Math.random() * 10 + 1),
     };
     pokedatabse.push(obj);
   }
@@ -75,8 +82,6 @@ async function fetchdamage() {
   let type = await fetch(`https://pokeapi.co/api/v2/type/`);
   type = await type.json();
 
-  let damageType = [];
-
   for (let i = 1; i <= 18; i++) {
     let damage = await fetch(`https://pokeapi.co/api/v2/type/${i}/`);
     damage = await damage.json();
@@ -87,7 +92,8 @@ async function fetchdamage() {
       ),
     };
 
-    damageType.push(obj);
+    // damageType.push(obj);
+    damageType[obj.type] = obj.advantageAgainst;
   }
   console.log(damageType);
 }
