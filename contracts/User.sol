@@ -49,6 +49,32 @@ contract User is Training {
         }
     }
 
+    function createUser(
+        string memory _name,
+        string memory _profilePictureUrl,
+        uint256[5] memory randArr
+    ) public {
+        Player memory user = Player({
+            name: _name,
+            profilePictureURL: _profilePictureUrl,
+            verified: true,
+            availableForChallenge: false,
+            winCount: 0,
+            lossCount: 0,
+            level: 1,
+            xp: 0,
+            monCoinBalance: 0,
+            winStreak: 0,
+            lossStreak: 0
+        });
+        userAddresses.push(msg.sender);
+        users[msg.sender] = user;
+        for (uint256 i = 0; i < 5; i++) {
+            // Random number to allot cryptomon card
+            createCryptomonCard(randArr[i]);
+        }
+    }
+
     function getUserCards() public view returns (Cryptomon[] memory) {
         uint256 numCards = 0;
         for (uint256 i = 0; i < cryptomons.length; i++) {

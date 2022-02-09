@@ -71,6 +71,12 @@ module.exports = {
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    rinkeby: {
+      provider: () => new HDWalletProvider(mnemonic, infura),
+      network_id: 4,
+      gas: 6721975, //from ganache-cli output
+      gasPrice: 20000000000, //From ganache-cli output
+    },
   },
 
   // Set default mocha options here, use special reporters etc.
@@ -80,17 +86,27 @@ module.exports = {
 
   // Configure your compilers
   compilers: {
+    // solc: {
+    //   version: "0.8.10", // Fetch exact version from solc-bin (default: truffle's version)
+    //   // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
+    //   // settings: {          // See the solidity docs for advice about optimization and evmVersion
+    //   //  optimizer: {
+    //   //    enabled: false,
+    //   //    runs: 200
+    //   //  },
+    //   //  evmVersion: "byzantium"
+    //   // }
+    // },
     solc: {
-      version: "0.8.10",    // Fetch exact version from solc-bin (default: truffle's version)
-      // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
-      //  evmVersion: "byzantium"
-      // }
-    }
+      version: "0.8.10",
+      settings: {
+        optimizer: {
+          enabled: true, // Default: false
+          runs: 1000, // Default: 200
+        },
+        evmVersion: "homestead", // Default: "byzantium"
+      },
+    },
   },
 
   // Truffle DB is currently disabled by default; to enable it, change enabled:
@@ -100,17 +116,17 @@ module.exports = {
   // NOTE: It is not possible to migrate your contracts to truffle DB and you should
   // make a backup of your artifacts to a safe location before enabling this feature.
   //
-  // After you backed up your artifacts you can utilize db by running migrate as follows: 
+  // After you backed up your artifacts you can utilize db by running migrate as follows:
   // $ truffle migrate --reset --compile-all
   //
   // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
+  // enabled: false,
+  // host: "127.0.0.1",
+  // adapter: {
+  //   name: "sqlite",
+  //   settings: {
+  //     directory: ".db"
+  //   }
+  // }
   // }
 };

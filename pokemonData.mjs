@@ -1,5 +1,41 @@
+import dotenv from "dotenv";
 import fetch from "node-fetch";
+import Web3 from "web3";
+import { address, abi } from "./config.mjs";
+
+dotenv.config();
+const pokedatabse = [];
 const pokemonDb = [];
+let damageType = {};
+let appData = {};
+
+const { WEB3_PROVIDER, ACCOUNT_PRIVATE_KEY } = process.env;
+const web3 = new Web3(WEB3_PROVIDER);
+
+async function load() {
+  appData.account = "0xC48E03A9e023b0b12173dAeE8E61e058062BC327";
+  appData.contract = new web3.eth.Contract(abi, address);
+}
+
+const signTransaction = async (encodedData) => {
+  const signedTransaction = await web3.eth.accounts.signTransaction(
+    {
+      to: address,
+      data: encodedData,
+      gas: 1000000,
+    },
+    ACCOUNT_PRIVATE_KEY
+  );
+  console.log(signedTransaction);
+  return signedTransaction;
+};
+
+const sendTransaction = async (signedTransaction) => {
+  const receipt = await web3.eth.sendSignedTransaction(
+    signedTransaction.rawTransaction
+  );
+  return receipt.status;
+};
 
 async function fetchAllPokemon() {
   let allpokemon = await fetch("https://pokeapi.co/api/v2/pokemon?limit=50");
@@ -11,37 +47,42 @@ async function fetchAllPokemon() {
   }
   // console.log(pokemonDb);
 
-  const pokedatabse = [];
   for (let i = 0; i < 18; i += 3) {
     let obj = {
-      name: [pokemonDb[i].name, pokemonDb[i + 1].name, pokemonDb[i + 2].name],
-      image: [
+      names: [pokemonDb[i].name, pokemonDb[i + 1].name, pokemonDb[i + 2].name],
+      images: [
         pokemonDb[i].image,
         pokemonDb[i + 1].image,
         pokemonDb[i + 2].image,
       ],
-      id: [pokemonDb[i].id, pokemonDb[i + 1].id, pokemonDb[i + 2].id],
-      type: pokemonDb[i].type,
+      price: Math.floor(Math.random() * 50 + 1),
+      monType: pokemonDb[i].type,
+      trainingGainPerHour:
+        25 -
+        Math.floor(Math.random() * (5 - damageType[pokemonDb[i].type].length)),
+      // trainingGainPerHour: 15 + Math.floor(Math.random() * 10 + 1),
     };
     pokedatabse.push(obj);
   }
 
   for (let i = 18; i < 28; i = i + 2) {
     let obj = {
-      name: [pokemonDb[i].name, pokemonDb[i + 1].name],
-      image: [pokemonDb[i].image, pokemonDb[i + 1].image],
-      id: [pokemonDb[i].id, pokemonDb[i + 1].id],
-      type: pokemonDb[i].type,
+      names: [pokemonDb[i].name, pokemonDb[i + 1].name],
+      images: [pokemonDb[i].image, pokemonDb[i + 1].image],
+      price: Math.floor(Math.random() * 50 + 1),
+      monType: pokemonDb[i].type,
+      trainingGainPerHour: 15 + Math.floor(Math.random() * 10 + 1),
     };
     pokedatabse.push(obj);
   }
 
   for (let i = 34; i < 42; i = i + 2) {
     let obj = {
-      name: [pokemonDb[i].name, pokemonDb[i + 1].name],
-      image: [pokemonDb[i].image, pokemonDb[i + 1].image],
-      id: [pokemonDb[i].id, pokemonDb[i + 1].id],
-      type: pokemonDb[i].type,
+      names: [pokemonDb[i].name, pokemonDb[i + 1].name],
+      images: [pokemonDb[i].image, pokemonDb[i + 1].image],
+      price: Math.floor(Math.random() * 50 + 1),
+      monType: pokemonDb[i].type,
+      trainingGainPerHour: 15 + Math.floor(Math.random() * 10 + 1),
     };
     pokedatabse.push(obj);
   }
@@ -69,13 +110,9 @@ async function fetchPokemonData(pokemon) {
   pokemonDb.push(data);
 }
 
-fetchAllPokemon();
-
 async function fetchdamage() {
   let type = await fetch(`https://pokeapi.co/api/v2/type/`);
   type = await type.json();
-
-  let damageType = [];
 
   for (let i = 1; i <= 18; i++) {
     let damage = await fetch(`https://pokeapi.co/api/v2/type/${i}/`);
@@ -87,9 +124,36 @@ async function fetchdamage() {
       ),
     };
 
-    damageType.push(obj);
+    // damageType.push(obj);
+    damageType[obj.type] = obj.advantageAgainst;
   }
   console.log(damageType);
 }
 
-fetchdamage();
+const addPokemonData = async () => {
+  for (let i = 0; i < pokedatabse.length; i++) {
+    const encodedData = appData.contract.methods
+      .createMonCollection(
+        pokedatabse[i].names,
+        pokedatabse[i].images,
+        pokedatabse[i].price,
+        pokedatabse[i].monType,
+        pokedatabse[i].trainingGainPerHour
+      )
+      .encodeABI();
+
+    const signedTransaction = await signTransaction(encodedData);
+    const status = await sendTransaction(signedTransaction);
+
+    console.log("TRANSACTION STATUS : ", status);
+  }
+};
+
+const main = async () => {
+  await fetchdamage();
+  await fetchAllPokemon();
+  await load();
+  await addPokemonData();
+};
+
+await main();
