@@ -14,4 +14,17 @@ contract Helper {
     function exponential(uint256 a) public pure returns (uint256) {
         return (11 * a) / (4 * a);
     }
+
+    function containsStringInArray(string[] memory array, string memory value)
+        public
+        pure
+        returns (bool)
+    {
+        for (uint256 i = 0; i < array.length; i++) {
+            if (compareStrings(array[i], value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
