@@ -1,6 +1,41 @@
+import dotenv from "dotenv";
 import fetch from "node-fetch";
+import Web3 from "web3";
+import { address, abi } from "./config.mjs";
+
+dotenv.config();
+const pokedatabse = [];
 const pokemonDb = [];
 let damageType = {};
+let appData = {};
+
+const { WEB3_PROVIDER, ACCOUNT_PRIVATE_KEY } = process.env;
+const web3 = new Web3(WEB3_PROVIDER);
+
+async function load() {
+  appData.account = "0xC48E03A9e023b0b12173dAeE8E61e058062BC327";
+  appData.contract = new web3.eth.Contract(abi, address);
+}
+
+const signTransaction = async (encodedData) => {
+  const signedTransaction = await web3.eth.accounts.signTransaction(
+    {
+      to: address,
+      data: encodedData,
+      gas: 1000000,
+    },
+    ACCOUNT_PRIVATE_KEY
+  );
+  console.log(signedTransaction);
+  return signedTransaction;
+};
+
+const sendTransaction = async (signedTransaction) => {
+  const receipt = await web3.eth.sendSignedTransaction(
+    signedTransaction.rawTransaction
+  );
+  return receipt.status;
+};
 
 async function fetchAllPokemon() {
   let allpokemon = await fetch("https://pokeapi.co/api/v2/pokemon?limit=50");
@@ -12,7 +47,6 @@ async function fetchAllPokemon() {
   }
   // console.log(pokemonDb);
 
-  const pokedatabse = [];
   for (let i = 0; i < 18; i += 3) {
     let obj = {
       names: [pokemonDb[i].name, pokemonDb[i + 1].name, pokemonDb[i + 2].name],
@@ -76,8 +110,6 @@ async function fetchPokemonData(pokemon) {
   pokemonDb.push(data);
 }
 
-fetchAllPokemon();
-
 async function fetchdamage() {
   let type = await fetch(`https://pokeapi.co/api/v2/type/`);
   type = await type.json();
@@ -98,4 +130,30 @@ async function fetchdamage() {
   console.log(damageType);
 }
 
-fetchdamage();
+const addPokemonData = async () => {
+  for (let i = 0; i < pokedatabse.length; i++) {
+    const encodedData = appData.contract.methods
+      .createMonCollection(
+        pokedatabse[i].names,
+        pokedatabse[i].images,
+        pokedatabse[i].price,
+        pokedatabse[i].monType,
+        pokedatabse[i].trainingGainPerHour
+      )
+      .encodeABI();
+
+    const signedTransaction = await signTransaction(encodedData);
+    const status = await sendTransaction(signedTransaction);
+
+    console.log("TRANSACTION STATUS : ", status);
+  }
+};
+
+const main = async () => {
+  await fetchdamage();
+  await fetchAllPokemon();
+  await load();
+  await addPokemonData();
+};
+
+await main();
