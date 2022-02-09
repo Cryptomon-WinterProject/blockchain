@@ -10,6 +10,7 @@ contract Battle is User {
         uint16 monWinXPLevelImpact;
         uint16 winnerMoncoinsIncrease;
         uint16 winnerMoncoinsLevelImpactFactor;
+        uint16 typeFactor;
     }
 
     CalcParams calcParams =
@@ -18,7 +19,8 @@ contract Battle is User {
             monWinXPIncrease: 50,
             monWinXPLevelImpact: 20,
             winnerMoncoinsIncrease: 1,
-            winnerMoncoinsLevelImpactFactor: 20
+            winnerMoncoinsLevelImpactFactor: 20,
+            typeFactor: 1
         });
 
     struct BattlingMons {
@@ -48,9 +50,9 @@ contract Battle is User {
     event AnnounceRoundWinner(
         bytes32 _challengeHash,
         address _winner,
-        uint256[] _xpGained
+        uint16 _xpGained
     );
-    event AnnounceWinner(bytes32 _challengeHash, uint256 _winnerMon);
+    event AnnounceWinner(bytes32 _challengeHash, address _winner);
 
     modifier onlyOnlinePlayer(address _player) {
         require(
@@ -77,14 +79,16 @@ contract Battle is User {
         uint16 _monWinXPIncrease,
         uint16 _monWinXPLevelImpact,
         uint16 _winnerMoncoinsIncrease,
-        uint16 _winnerMoncoinsLevelImpact
+        uint16 _winnerMoncoinsLevelImpact,
+        uint16 _typeFactor
     ) public onlyOwner {
         calcParams = CalcParams({
             randomNumberMultiplier: _randomNumberMultiplier,
             monWinXPIncrease: _monWinXPIncrease,
             monWinXPLevelImpact: _monWinXPLevelImpact,
             winnerMoncoinsIncrease: _winnerMoncoinsIncrease,
-            winnerMoncoinsLevelImpactFactor: _winnerMoncoinsLevelImpact
+            winnerMoncoinsLevelImpactFactor: _winnerMoncoinsLevelImpact,
+            typeFactor: _typeFactor
         });
     }
 
@@ -145,13 +149,17 @@ contract Battle is User {
 
     function getTypeAdvantage(string memory _type1, string memory _type2)
         internal
-        pure
+        view
         returns (uint256)
     {
         if (compareStrings(_type1, _type2)) {
             return 0;
-        } else {
+        } else if (
+            containsStringInArray(cryptomonTypesAdvantages[_type1], _type2)
+        ) {
             return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -167,15 +175,15 @@ contract Battle is User {
         }
     }
 
-    function calculateMonWinXPIncrease(Cryptomon memory _challengerMon)
+    function calculateMonWinXPIncrease(Cryptomon memory _mon)
         internal
         view
         returns (uint16)
     {
         return
-            calcParams.randomNumberMultiplier -
-            ((_challengerMon.monLevel * calcParams.monWinXPLevelImpact) /
-                calcXPRange(_challengerMon.monLevel));
+            calcParams.monWinXPIncrease -
+            ((_mon.monLevel * calcParams.monWinXPLevelImpact) /
+                calcXPRange(_mon.monLevel));
     }
 
     function settleChallenge(
@@ -188,8 +196,6 @@ contract Battle is User {
         );
 
         BattlingMons memory battleMons = monsInBattle[_challengeHash];
-        address challenger = cryptomons[battleMons.challengerMons[0]].owner;
-        address opponent = cryptomons[battleMons.opponentMons[0]].owner;
 
         Cryptomon[] memory challengerMons = new Cryptomon[](3);
         Cryptomon[] memory opponentMons = new Cryptomon[](3);
@@ -199,32 +205,37 @@ contract Battle is User {
             opponentMons[i] = cryptomons[battleMons.opponentMons[i]];
         }
 
+        Player memory challenger = users[challengerMons[0].owner];
+        Player memory opponent = users[opponentMons[0].owner];
+
         uint8 challangerWinCount = 0;
         for (uint8 index = 0; index < 3; index++) {
             int256 challengerAdvantagePts = int256(
                 (challengerMons[index].monLevel) *
                     (1 +
+                        calcParams.typeFactor *
                         getTypeAdvantage(
                             monCollections[challengerMons[index].monIndex]
                                 .monType,
                             monCollections[opponentMons[index].monIndex].monType
                         )) +
-                    users[challenger].level +
-                    exponential(users[challenger].lossStreak) -
-                    exponential(users[challenger].winStreak)
+                    challenger.level +
+                    exponential(challenger.lossStreak) -
+                    exponential(challenger.winStreak)
             );
             int256 opponentAdvantagePts = int256(
                 (opponentMons[index].monLevel) *
                     (1 +
+                        calcParams.typeFactor *
                         getTypeAdvantage(
                             monCollections[opponentMons[index].monIndex]
                                 .monType,
                             monCollections[challengerMons[index].monIndex]
                                 .monType
                         )) +
-                    users[opponent].level +
-                    exponential(users[opponent].lossStreak) -
-                    exponential(users[opponent].winStreak)
+                    opponent.level +
+                    exponential(opponent.lossStreak) -
+                    exponential(opponent.winStreak)
             );
 
             if (challengerAdvantagePts < 0) {
@@ -246,13 +257,36 @@ contract Battle is User {
                     challengerMons[index]
                 );
                 increaseXP(battleMons.challengerMons[index], monWinXPIncrease);
-                // emit AnnounceRoundWinner(_challengeHash, _winner, _xpGained);
+                emit AnnounceRoundWinner(
+                    _challengeHash,
+                    challengerMons[0].owner,
+                    monWinXPIncrease
+                );
             } else {
-                increaseXP(
-                    battleMons.opponentMons[index],
-                    calculateMonWinXPIncrease(opponentMons[index])
+                uint16 monWinXPIncrease = calculateMonWinXPIncrease(
+                    opponentMons[index]
+                );
+                increaseXP(battleMons.opponentMons[index], monWinXPIncrease);
+                emit AnnounceRoundWinner(
+                    _challengeHash,
+                    opponentMons[0].owner,
+                    monWinXPIncrease
                 );
             }
+        }
+        if (challangerWinCount >= 2) {
+            challenger.winStreak++;
+            challenger.lossStreak = 0;
+            opponent.lossStreak++;
+            opponent.winStreak = 0;
+            emit AnnounceWinner(_challengeHash, challengerMons[0].owner);
+            
+        } else {
+            challenger.lossStreak++;
+            challenger.winStreak = 0;
+            opponent.lossStreak++;
+            opponent.winStreak = 0;
+            emit AnnounceWinner(_challengeHash, opponentMons[0].owner);
         }
     }
 }
