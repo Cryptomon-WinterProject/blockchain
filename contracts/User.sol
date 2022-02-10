@@ -108,6 +108,13 @@ contract User is Training {
         users[msg.sender].monCoinBalance += msg.value / 1000;
     }
 
+    function updateWinCount(address _userAddress) public onlyOwner {
+        Player memory user = users[_userAddress];
+        user.winCount++;
+        user.level = ((user.winCount * 100) / (100 + user.winCount)) + 1;
+        users[_userAddress] = user;
+    }
+
     function getOnlinePlayers()
         public
         view

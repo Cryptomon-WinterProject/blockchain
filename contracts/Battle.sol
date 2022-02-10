@@ -52,7 +52,11 @@ contract Battle is User {
         address _winner,
         uint16 _xpGained
     );
-    event AnnounceWinner(bytes32 _challengeHash, address _winner);
+    event AnnounceWinner(
+        bytes32 _challengeHash,
+        address _winner,
+        uint16 increasedMoncoins
+    );
 
     modifier onlyOnlinePlayer(address _player) {
         require(
@@ -274,19 +278,65 @@ contract Battle is User {
                 );
             }
         }
+
+        uint16 levelDifference = uint16(challenger.level - opponent.level);
+
         if (challangerWinCount >= 2) {
             challenger.winStreak++;
             challenger.lossStreak = 0;
             opponent.lossStreak++;
             opponent.winStreak = 0;
-            emit AnnounceWinner(_challengeHash, challengerMons[0].owner);
-            
+            challenger.availableForChallenge = true;
+            uint16 moncoinIncrease;
+
+            if (levelDifference < 0) {
+                moncoinIncrease =
+                    calcParams.winnerMoncoinsIncrease -
+                    levelDifference *
+                    calcParams.winnerMoncoinsLevelImpactFactor;
+            } else {
+                moncoinIncrease = calcParams.winnerMoncoinsIncrease;
+            }
+
+            challenger.monCoinBalance += moncoinIncrease;
+
+            updateWinCount(challengerMons[0].owner);
+            emit AnnounceWinner(
+                _challengeHash,
+                challengerMons[0].owner,
+                moncoinIncrease
+            );
         } else {
             challenger.lossStreak++;
             challenger.winStreak = 0;
-            opponent.lossStreak++;
-            opponent.winStreak = 0;
-            emit AnnounceWinner(_challengeHash, opponentMons[0].owner);
+            opponent.winStreak++;
+            opponent.lossStreak = 0;
+            challenger.availableForChallenge = true;
+            uint16 moncoinIncrease;
+
+            if (levelDifference > 0) {
+                moncoinIncrease =
+                    calcParams.winnerMoncoinsIncrease +
+                    levelDifference *
+                    calcParams.winnerMoncoinsLevelImpactFactor;
+            } else {
+                moncoinIncrease = calcParams.winnerMoncoinsIncrease;
+            }
+
+            opponent.monCoinBalance += moncoinIncrease;
+
+            updateWinCount(opponentMons[0].owner);
+            emit AnnounceWinner(
+                _challengeHash,
+                opponentMons[0].owner,
+                moncoinIncrease
+            );
         }
+        // Update locale vars to state variables
+        users[challengerMons[0].owner] = challenger;
+        users[opponentMons[0].owner] = opponent;
+
+        // Update challenge status
+        challengeStatus[_challengeHash] = 0;
     }
 }
