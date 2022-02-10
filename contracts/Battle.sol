@@ -204,7 +204,7 @@ contract Battle is User {
         Cryptomon[] memory challengerMons = new Cryptomon[](3);
         Cryptomon[] memory opponentMons = new Cryptomon[](3);
 
-        for (uint256 i = 0; i < battleMons.challengerMons.length; i++) {
+        for (uint8 i = 0; i < 3; i++) {
             challengerMons[i] = cryptomons[battleMons.challengerMons[i]];
             opponentMons[i] = cryptomons[battleMons.opponentMons[i]];
         }
