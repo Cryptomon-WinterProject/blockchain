@@ -12,7 +12,7 @@ contract Helper {
     }
 
     function exponential(uint256 a) public pure returns (uint256) {
-        return (11 * a) / (4 * a);
+        return (11 ** a) / (4 ** a);
     }
 
     function containsStringInArray(string[] memory array, string memory value)
