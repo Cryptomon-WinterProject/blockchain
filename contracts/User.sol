@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "./Training.sol";
+import "./CryptomonCard.sol";
 
-contract User is Training {
+contract User is CryptomonCard {
     // Temporary structure for player
     struct Player {
         string name;
@@ -27,27 +27,27 @@ contract User is Training {
         _;
     }
 
-    function createTestReadyUser(string memory _name) public {
-        Player memory user = Player({
-            name: _name,
-            profilePictureURL: "",
-            verified: true,
-            availableForChallenge: false,
-            winCount: 0,
-            lossCount: 0,
-            level: 1,
-            xp: 0,
-            monCoinBalance: 0,
-            winStreak: 0,
-            lossStreak: 0
-        });
-        userAddresses.push(msg.sender);
-        users[msg.sender] = user;
-        for (uint256 i = 0; i < 5; i++) {
-            // Random number to allot cryptomon card
-            createCryptomonCard(i);
-        }
-    }
+    // function createTestReadyUser(string memory _name) public {
+    //     Player memory user = Player({
+    //         name: _name,
+    //         profilePictureURL: "",
+    //         verified: true,
+    //         availableForChallenge: false,
+    //         winCount: 0,
+    //         lossCount: 0,
+    //         level: 1,
+    //         xp: 0,
+    //         monCoinBalance: 0,
+    //         winStreak: 0,
+    //         lossStreak: 0
+    //     });
+    //     userAddresses.push(msg.sender);
+    //     users[msg.sender] = user;
+    //     for (uint256 i = 0; i < 5; i++) {
+    //         // Random number to allot cryptomon card
+    //         createCryptomonCard(i);
+    //     }
+    // }
 
     function createUser(
         string memory _name,
@@ -75,18 +75,18 @@ contract User is Training {
         }
     }
 
-    function getUserCards() public view returns (Cryptomon[] memory) {
+    function getUserCards() public view returns (uint256[] memory) {
         uint256 numCards = 0;
         for (uint256 i = 0; i < cryptomons.length; i++) {
             if (cryptomons[i].owner == msg.sender) {
                 numCards++;
             }
         }
-        Cryptomon[] memory cards = new Cryptomon[](numCards);
+        uint256[] memory cards = new uint256[](numCards);
         uint8 index = 0;
         for (uint256 i = 0; i < cryptomons.length; i++) {
             if (cryptomons[i].owner == msg.sender) {
-                cards[index] = cryptomons[i];
+                cards[index] = i;
                 index++;
             }
         }
@@ -103,10 +103,10 @@ contract User is Training {
         users[_userAddress] = user;
     }
 
-    function buyMonCoins() public payable {
-        require(msg.value % 1000 == 0, "Amount must be in multiples of 1000");
-        users[msg.sender].monCoinBalance += msg.value / 1000;
-    }
+    // function buyMonCoins() public payable {
+    //     require(msg.value % 1000 == 0, "Amount must be in multiples of 1000");
+    //     users[msg.sender].monCoinBalance += msg.value / 1000;
+    // }
 
     function updateWinCount(address _userAddress) public onlyOwner {
         Player memory user = users[_userAddress];
