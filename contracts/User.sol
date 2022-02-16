@@ -106,10 +106,10 @@ contract User is CryptomonCard {
         emit ChallengeReady(_userAddress, _online);
     }
 
-    // function buyMonCoins() public payable {
-    //     require(msg.value % 1000 == 0, "Amount must be in multiples of 1000");
-    //     users[msg.sender].monCoinBalance += msg.value / 1000;
-    // }
+    function buyMonCoins() public payable {
+        require(msg.value % 1000 == 0, "Amount must be in multiples of 1000");
+        users[msg.sender].monCoinBalance += msg.value / 1000;
+    }
 
     function updateWinCount(address _userAddress) public onlyOwner {
         Player memory user = users[_userAddress];
