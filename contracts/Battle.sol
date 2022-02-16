@@ -4,24 +4,24 @@ pragma solidity >=0.4.22 <0.9.0;
 import "./Training.sol";
 
 contract Battle is Training {
-    struct CalcParams {
-        uint16 randomNumberMultiplier;
-        uint16 monWinXPIncrease;
-        uint16 monWinXPLevelImpact;
-        uint16 winnerMoncoinsIncrease;
-        uint16 winnerMoncoinsLevelImpactFactor;
-        uint16 typeFactor;
-    }
+    // struct CalcParams {
+    // uint16 randomNumberMultiplier;
+    // uint16 monWinXPIncrease;
+    // uint16 monWinXPLevelImpact;
+    // uint16 winnerMoncoinsIncrease;
+    // uint16 winnerMoncoinsLevelImpactFactor;
+    // uint16 typeFactor;
+    // }
 
-    CalcParams calcParams =
-        CalcParams({
-            randomNumberMultiplier: 1000,
-            monWinXPIncrease: 50,
-            monWinXPLevelImpact: 20,
-            winnerMoncoinsIncrease: 1,
-            winnerMoncoinsLevelImpactFactor: 20,
-            typeFactor: 1
-        });
+    // CalcParams calcParams =
+    //     CalcParams({
+    // randomNumberMultiplier: 1000,
+    // monWinXPIncrease: 50,
+    // monWinXPLevelImpact: 20,
+    // winnerMoncoinsIncrease: 1,
+    // winnerMoncoinsLevelImpactFactor: 20,
+    // typeFactor: 1
+    // });
 
     struct BattlingMons {
         uint256[] challengerMons;
@@ -78,23 +78,23 @@ contract Battle is Training {
         _;
     }
 
-    function setCalcParams(
-        uint16 _randomNumberMultiplier,
-        uint16 _monWinXPIncrease,
-        uint16 _monWinXPLevelImpact,
-        uint16 _winnerMoncoinsIncrease,
-        uint16 _winnerMoncoinsLevelImpact,
-        uint16 _typeFactor
-    ) public onlyOwner {
-        calcParams = CalcParams({
-            randomNumberMultiplier: _randomNumberMultiplier,
-            monWinXPIncrease: _monWinXPIncrease,
-            monWinXPLevelImpact: _monWinXPLevelImpact,
-            winnerMoncoinsIncrease: _winnerMoncoinsIncrease,
-            winnerMoncoinsLevelImpactFactor: _winnerMoncoinsLevelImpact,
-            typeFactor: _typeFactor
-        });
-    }
+    // function setCalcParams(
+    //     uint16 _randomNumberMultiplier,
+    //     uint16 _monWinXPIncrease,
+    //     uint16 _monWinXPLevelImpact,
+    //     uint16 _winnerMoncoinsIncrease,
+    //     uint16 _winnerMoncoinsLevelImpact,
+    //     uint16 _typeFactor
+    // ) public onlyOwner {
+    //     calcParams = CalcParams({
+    //         randomNumberMultiplier: _randomNumberMultiplier,
+    //         monWinXPIncrease: _monWinXPIncrease,
+    //         monWinXPLevelImpact: _monWinXPLevelImpact,
+    //         winnerMoncoinsIncrease: _winnerMoncoinsIncrease,
+    //         winnerMoncoinsLevelImpactFactor: _winnerMoncoinsLevelImpact,
+    //         typeFactor: _typeFactor
+    //     });
+    // }
 
     function getMonsInBattle(bytes32 _challengeHash)
         public
@@ -171,8 +171,8 @@ contract Battle is Training {
         uint256 _x,
         uint256 _y,
         uint16 _rand
-    ) internal view returns (bool) {
-        if ((_x + _y) * _rand <= _x * calcParams.randomNumberMultiplier) {
+    ) internal pure returns (bool) {
+        if ((_x + _y) * _rand <= _x * 1000) {
             return true;
         } else {
             return false;
@@ -181,162 +181,151 @@ contract Battle is Training {
 
     function calculateMonWinXPIncrease(Cryptomon memory _mon)
         internal
-        view
+        pure
         returns (uint16)
     {
-        return
-            calcParams.monWinXPIncrease -
-            ((_mon.monLevel * calcParams.monWinXPLevelImpact) /
-                calcXPRange(_mon.monLevel));
+        return 50 - ((_mon.monLevel * 20) / calcXPRange(_mon.monLevel));
     }
 
-    // function settleChallenge(
-    //     bytes32 _challengeHash,
-    //     uint16[] memory _randomNumber
-    // ) public onlyOwner {
-    //     require(
-    //         challengeStatus[_challengeHash] == 2,
-    //         "Challenge is not ongoing"
-    //     );
+    function settleChallenge(
+        bytes32 _challengeHash,
+        uint16[] memory _randomNumber
+    ) public onlyOwner {
+        require(
+            challengeStatus[_challengeHash] == 2,
+            "Challenge is not ongoing"
+        );
 
-    //     BattlingMons memory battleMons = monsInBattle[_challengeHash];
+        BattlingMons memory battleMons = monsInBattle[_challengeHash];
 
-    //     Cryptomon[] memory challengerMons = new Cryptomon[](3);
-    //     Cryptomon[] memory opponentMons = new Cryptomon[](3);
+        Cryptomon[] memory challengerMons = new Cryptomon[](3);
+        Cryptomon[] memory opponentMons = new Cryptomon[](3);
 
-    //     for (uint8 i = 0; i < 3; i++) {
-    //         challengerMons[i] = cryptomons[battleMons.challengerMons[i]];
-    //         opponentMons[i] = cryptomons[battleMons.opponentMons[i]];
-    //     }
+        for (uint8 i = 0; i < 3; i++) {
+            challengerMons[i] = cryptomons[battleMons.challengerMons[i]];
+            opponentMons[i] = cryptomons[battleMons.opponentMons[i]];
+        }
 
-    //     Player memory challenger = users[challengerMons[0].owner];
-    //     Player memory opponent = users[opponentMons[0].owner];
+        Player memory challenger = users[challengerMons[0].owner];
+        Player memory opponent = users[opponentMons[0].owner];
 
-    //     uint8 challangerWinCount = 0;
-    //     for (uint8 index = 0; index < 3; index++) {
-    //         int256 challengerAdvantagePts = int256(
-    //             (challengerMons[index].monLevel) *
-    //                 (1 +
-    //                     calcParams.typeFactor *
-    //                     getTypeAdvantage(
-    //                         monCollections[challengerMons[index].monIndex]
-    //                             .monType,
-    //                         monCollections[opponentMons[index].monIndex].monType
-    //                     )) +
-    //                 challenger.level +
-    //                 exponential(challenger.lossStreak) -
-    //                 exponential(challenger.winStreak)
-    //         );
-    //         int256 opponentAdvantagePts = int256(
-    //             (opponentMons[index].monLevel) *
-    //                 (1 +
-    //                     calcParams.typeFactor *
-    //                     getTypeAdvantage(
-    //                         monCollections[opponentMons[index].monIndex]
-    //                             .monType,
-    //                         monCollections[challengerMons[index].monIndex]
-    //                             .monType
-    //                     )) +
-    //                 opponent.level +
-    //                 exponential(opponent.lossStreak) -
-    //                 exponential(opponent.winStreak)
-    //         );
+        uint8 challangerWinCount = 0;
+        for (uint8 index = 0; index < 3; index++) {
+            int256 challengerAdvantagePts = int256(
+                (challengerMons[index].monLevel) *
+                    (1 +
+                        getTypeAdvantage(
+                            monCollections[challengerMons[index].monIndex]
+                                .monType,
+                            monCollections[opponentMons[index].monIndex].monType
+                        )) +
+                    challenger.level +
+                    exponential(challenger.lossStreak) -
+                    exponential(challenger.winStreak)
+            );
+            int256 opponentAdvantagePts = int256(
+                (opponentMons[index].monLevel) *
+                    (1 +
+                        getTypeAdvantage(
+                            monCollections[opponentMons[index].monIndex]
+                                .monType,
+                            monCollections[challengerMons[index].monIndex]
+                                .monType
+                        )) +
+                    opponent.level +
+                    exponential(opponent.lossStreak) -
+                    exponential(opponent.winStreak)
+            );
 
-    //         if (challengerAdvantagePts < 0) {
-    //             challengerAdvantagePts = 1;
-    //         }
-    //         if (opponentAdvantagePts < 0) {
-    //             opponentAdvantagePts = 1;
-    //         }
+            if (challengerAdvantagePts < 0) {
+                challengerAdvantagePts = 1;
+            }
+            if (opponentAdvantagePts < 0) {
+                opponentAdvantagePts = 1;
+            }
 
-    //         if (
-    //             decideWinner(
-    //                 uint256(challengerAdvantagePts),
-    //                 uint256(opponentAdvantagePts),
-    //                 _randomNumber[index]
-    //             )
-    //         ) {
-    //             challangerWinCount++;
-    //             uint16 monWinXPIncrease = calculateMonWinXPIncrease(
-    //                 challengerMons[index]
-    //             );
-    //             increaseXP(battleMons.challengerMons[index], monWinXPIncrease);
-    //             emit AnnounceRoundWinner(
-    //                 _challengeHash,
-    //                 challengerMons[0].owner,
-    //                 monWinXPIncrease
-    //             );
-    //         } else {
-    //             uint16 monWinXPIncrease = calculateMonWinXPIncrease(
-    //                 opponentMons[index]
-    //             );
-    //             increaseXP(battleMons.opponentMons[index], monWinXPIncrease);
-    //             emit AnnounceRoundWinner(
-    //                 _challengeHash,
-    //                 opponentMons[0].owner,
-    //                 monWinXPIncrease
-    //             );
-    //         }
-    //     }
+            // if (
+            //     decideWinner(
+            //         uint256(challengerAdvantagePts),
+            //         uint256(opponentAdvantagePts),
+            //         _randomNumber[index]
+            //     )
+            // ) {
+            //     challangerWinCount++;
+            //     uint16 monWinXPIncrease = calculateMonWinXPIncrease(
+            //         challengerMons[index]
+            //     );
+            //     increaseXP(battleMons.challengerMons[index], monWinXPIncrease);
+            //     emit AnnounceRoundWinner(
+            //         _challengeHash,
+            //         challengerMons[0].owner,
+            //         monWinXPIncrease
+            //     );
+            // } else {
+            //     uint16 monWinXPIncrease = calculateMonWinXPIncrease(
+            //         opponentMons[index]
+            //     );
+            //     increaseXP(battleMons.opponentMons[index], monWinXPIncrease);
+            //     emit AnnounceRoundWinner(
+            //         _challengeHash,
+            //         opponentMons[0].owner,
+            //         monWinXPIncrease
+            //     );
+            // }
+        }
 
-    // uint16 levelDifference = uint16(challenger.level - opponent.level);
+        // uint16 levelDifference = uint16(challenger.level - opponent.level);
 
-    // if (challangerWinCount >= 2) {
-    //     challenger.winStreak++;
-    //     challenger.lossStreak = 0;
-    //     opponent.lossStreak++;
-    //     opponent.winStreak = 0;
-    //     challenger.availableForChallenge = true;
-    //     uint16 moncoinIncrease;
+        // if (challangerWinCount >= 2) {
+        //     challenger.winStreak++;
+        //     challenger.lossStreak = 0;
+        //     opponent.lossStreak++;
+        //     opponent.winStreak = 0;
+        //     challenger.availableForChallenge = true;
+        //     uint16 moncoinIncrease;
 
-    //     if (levelDifference < 0) {
-    //         moncoinIncrease =
-    //             calcParams.winnerMoncoinsIncrease -
-    //             levelDifference *
-    //             calcParams.winnerMoncoinsLevelImpactFactor;
-    //     } else {
-    //         moncoinIncrease = calcParams.winnerMoncoinsIncrease;
-    //     }
+        //     if (levelDifference < 0) {
+        //         moncoinIncrease = 1 - levelDifference * 20;
+        //     } else {
+        //         moncoinIncrease = 1;
+        //     }
 
-    //     challenger.monCoinBalance += moncoinIncrease;
+        //     challenger.monCoinBalance += moncoinIncrease;
 
-    //     updateWinCount(challengerMons[0].owner);
-    //     emit AnnounceWinner(
-    //         _challengeHash,
-    //         challengerMons[0].owner,
-    //         moncoinIncrease
-    //     );
-    // } else {
-    //     challenger.lossStreak++;
-    //     challenger.winStreak = 0;
-    //     opponent.winStreak++;
-    //     opponent.lossStreak = 0;
-    //     challenger.availableForChallenge = true;
-    //     uint16 moncoinIncrease;
+        //     updateWinCount(challengerMons[0].owner);
+        //     emit AnnounceWinner(
+        //         _challengeHash,
+        //         challengerMons[0].owner,
+        //         moncoinIncrease
+        //     );
+        // } else {
+        //     challenger.lossStreak++;
+        //     challenger.winStreak = 0;
+        //     opponent.winStreak++;
+        //     opponent.lossStreak = 0;
+        //     challenger.availableForChallenge = true;
+        //     uint16 moncoinIncrease;
 
-    //     if (levelDifference > 0) {
-    //         moncoinIncrease =
-    //             calcParams.winnerMoncoinsIncrease +
-    //             levelDifference *
-    //             calcParams.winnerMoncoinsLevelImpactFactor;
-    //     } else {
-    //         moncoinIncrease = calcParams.winnerMoncoinsIncrease;
-    //     }
+        //     if (levelDifference > 0) {
+        //         moncoinIncrease = 1 + levelDifference * 20;
+        //     } else {
+        //         moncoinIncrease = 1;
+        //     }
 
-    //     opponent.monCoinBalance += moncoinIncrease;
+        //     opponent.monCoinBalance += moncoinIncrease;
 
-    //     updateWinCount(opponentMons[0].owner);
-    //     emit AnnounceWinner(
-    //         _challengeHash,
-    //         opponentMons[0].owner,
-    //         moncoinIncrease
-    //     );
-    // }
-    // // Update locale vars to state variables
-    // users[challengerMons[0].owner] = challenger;
-    // users[opponentMons[0].owner] = opponent;
+        //     updateWinCount(opponentMons[0].owner);
+        //     emit AnnounceWinner(
+        //         _challengeHash,
+        //         opponentMons[0].owner,
+        //         moncoinIncrease
+        //     );
+        // }
+        // Update locale vars to state variables
+        users[challengerMons[0].owner] = challenger;
+        users[opponentMons[0].owner] = opponent;
 
-    // // Update challenge status
-    // challengeStatus[_challengeHash] = 0;
-    // }
+        // Update challenge status
+        challengeStatus[_challengeHash] = 0;
+    }
 }
