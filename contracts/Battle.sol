@@ -158,13 +158,20 @@ contract Battle is Training {
     {
         if (compareStrings(_type1, _type2)) {
             return 0;
-        } else if (
-            containsStringInArray(cryptomonTypesAdvantages[_type1], _type2)
-        ) {
-            return 1;
         } else {
-            return 0;
+            for (
+                uint256 i = 0;
+                i < cryptomonTypesAdvantages[_type1].length;
+                i++
+            ) {
+                if (
+                    compareStrings(cryptomonTypesAdvantages[_type1][i], _type2)
+                ) {
+                    return 1;
+                }
+            }
         }
+        return 0;
     }
 
     function decideWinner(
@@ -244,34 +251,34 @@ contract Battle is Training {
                 opponentAdvantagePts = 1;
             }
 
-            // if (
-            //     decideWinner(
-            //         uint256(challengerAdvantagePts),
-            //         uint256(opponentAdvantagePts),
-            //         _randomNumber[index]
-            //     )
-            // ) {
-            //     challangerWinCount++;
-            //     uint16 monWinXPIncrease = calculateMonWinXPIncrease(
-            //         challengerMons[index]
-            //     );
-            //     increaseXP(battleMons.challengerMons[index], monWinXPIncrease);
-            //     emit AnnounceRoundWinner(
-            //         _challengeHash,
-            //         challengerMons[0].owner,
-            //         monWinXPIncrease
-            //     );
-            // } else {
-            //     uint16 monWinXPIncrease = calculateMonWinXPIncrease(
-            //         opponentMons[index]
-            //     );
-            //     increaseXP(battleMons.opponentMons[index], monWinXPIncrease);
-            //     emit AnnounceRoundWinner(
-            //         _challengeHash,
-            //         opponentMons[0].owner,
-            //         monWinXPIncrease
-            //     );
-            // }
+            if (
+                decideWinner(
+                    uint256(challengerAdvantagePts),
+                    uint256(opponentAdvantagePts),
+                    _randomNumber[index]
+                )
+            ) {
+                challangerWinCount++;
+                uint16 monWinXPIncrease = calculateMonWinXPIncrease(
+                    challengerMons[index]
+                );
+                increaseXP(battleMons.challengerMons[index], monWinXPIncrease);
+                emit AnnounceRoundWinner(
+                    _challengeHash,
+                    challengerMons[0].owner,
+                    monWinXPIncrease
+                );
+            } else {
+                uint16 monWinXPIncrease = calculateMonWinXPIncrease(
+                    opponentMons[index]
+                );
+                increaseXP(battleMons.opponentMons[index], monWinXPIncrease);
+                emit AnnounceRoundWinner(
+                    _challengeHash,
+                    opponentMons[0].owner,
+                    monWinXPIncrease
+                );
+            }
         }
 
         // uint16 levelDifference = uint16(challenger.level - opponent.level);
