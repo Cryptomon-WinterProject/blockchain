@@ -77,18 +77,18 @@ contract CryptomonCollection is CryptomonType {
         return monCollectionsLength;
     }
 
-    function deleteMonCollection(uint256 index)
-        public
-        onlyOwner
-        returns (MonCollection[] memory)
-    {
-        if (index >= monCollections.length) return monCollections;
+    // function deleteMonCollection(uint256 index)
+    //     public
+    //     onlyOwner
+    //     returns (MonCollection[] memory)
+    // {
+    //     if (index >= monCollections.length) return monCollections;
 
-        for (uint256 i = index; i < monCollections.length - 1; i++) {
-            monCollections[i] = monCollections[i + 1];
-        }
-        delete monCollections[monCollections.length - 1];
-        monCollections.pop();
-        return monCollections;
-    }
+    //     for (uint256 i = index; i < monCollections.length - 1; i++) {
+    //         monCollections[i] = monCollections[i + 1];
+    //     }
+    //     delete monCollections[monCollections.length - 1];
+    //     monCollections.pop();
+    //     return monCollections;
+    // }
 }

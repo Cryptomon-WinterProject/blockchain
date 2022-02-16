@@ -35,7 +35,6 @@ contract Battle is Training {
 
     mapping(bytes32 => BattlingMons) internal monsInBattle;
 
-    event ChallengeReady(address _player);
     event NewChallenge(
         address _challenger,
         address indexed _opponent,
@@ -281,53 +280,54 @@ contract Battle is Training {
             }
         }
 
-        // uint16 levelDifference = uint16(challenger.level - opponent.level);
+        uint16 levelDifference = uint16(challenger.level - opponent.level);
 
-        // if (challangerWinCount >= 2) {
-        //     challenger.winStreak++;
-        //     challenger.lossStreak = 0;
-        //     opponent.lossStreak++;
-        //     opponent.winStreak = 0;
-        //     challenger.availableForChallenge = true;
-        //     uint16 moncoinIncrease;
+        if (challangerWinCount >= 2) {
+            challenger.winStreak++;
+            challenger.lossStreak = 0;
+            opponent.lossStreak++;
+            opponent.winStreak = 0;
+            challenger.availableForChallenge = true;
+            uint16 moncoinIncrease;
 
-        //     if (levelDifference < 0) {
-        //         moncoinIncrease = 1 - levelDifference * 20;
-        //     } else {
-        //         moncoinIncrease = 1;
-        //     }
+            if (levelDifference < 0) {
+                moncoinIncrease = 1 - levelDifference * 20;
+            } else {
+                moncoinIncrease = 1;
+            }
 
-        //     challenger.monCoinBalance += moncoinIncrease;
+            challenger.monCoinBalance += moncoinIncrease;
 
-        //     updateWinCount(challengerMons[0].owner);
-        //     emit AnnounceWinner(
-        //         _challengeHash,
-        //         challengerMons[0].owner,
-        //         moncoinIncrease
-        //     );
-        // } else {
-        //     challenger.lossStreak++;
-        //     challenger.winStreak = 0;
-        //     opponent.winStreak++;
-        //     opponent.lossStreak = 0;
-        //     challenger.availableForChallenge = true;
-        //     uint16 moncoinIncrease;
+            updateWinCount(challengerMons[0].owner);
+            emit AnnounceWinner(
+                _challengeHash,
+                challengerMons[0].owner,
+                moncoinIncrease
+            );
+        }
+         else {
+            challenger.lossStreak++;
+            challenger.winStreak = 0;
+            opponent.winStreak++;
+            opponent.lossStreak = 0;
+            challenger.availableForChallenge = true;
+            uint16 moncoinIncrease;
 
-        //     if (levelDifference > 0) {
-        //         moncoinIncrease = 1 + levelDifference * 20;
-        //     } else {
-        //         moncoinIncrease = 1;
-        //     }
+            if (levelDifference > 0) {
+                moncoinIncrease = 1 + levelDifference * 20;
+            } else {
+                moncoinIncrease = 1;
+            }
 
-        //     opponent.monCoinBalance += moncoinIncrease;
+            opponent.monCoinBalance += moncoinIncrease;
 
-        //     updateWinCount(opponentMons[0].owner);
-        //     emit AnnounceWinner(
-        //         _challengeHash,
-        //         opponentMons[0].owner,
-        //         moncoinIncrease
-        //     );
-        // }
+            updateWinCount(opponentMons[0].owner);
+            emit AnnounceWinner(
+                _challengeHash,
+                opponentMons[0].owner,
+                moncoinIncrease
+            );
+        }
         // Update locale vars to state variables
         users[challengerMons[0].owner] = challenger;
         users[opponentMons[0].owner] = opponent;

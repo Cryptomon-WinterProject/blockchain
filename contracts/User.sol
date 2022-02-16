@@ -19,6 +19,8 @@ contract User is CryptomonCard {
         uint256 lossStreak;
     }
 
+    event ChallengeReady(address _player, bool _ready);
+
     address[] public userAddresses;
     mapping(address => Player) public users;
 
@@ -101,6 +103,7 @@ contract User is CryptomonCard {
         Player memory user = users[_userAddress];
         user.availableForChallenge = _online;
         users[_userAddress] = user;
+        emit ChallengeReady(_userAddress, _online);
     }
 
     // function buyMonCoins() public payable {
