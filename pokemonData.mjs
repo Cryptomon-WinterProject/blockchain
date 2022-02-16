@@ -13,7 +13,7 @@ const { WEB3_PROVIDER, ACCOUNT_PRIVATE_KEY } = process.env;
 const web3 = new Web3(WEB3_PROVIDER);
 
 async function load() {
-  appData.account = "0xC48E03A9e023b0b12173dAeE8E61e058062BC327";
+  appData.account = process.env.ACCOUNT_ADDRESS;
   appData.contract = new web3.eth.Contract(abi, address);
 }
 

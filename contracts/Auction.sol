@@ -5,24 +5,22 @@ pragma experimental ABIEncoderV2;
 import "./AuctionMons.sol";
 
 contract Auction is AuctionMons {
-    mapping(address => uint256) monCoinBid;
+    mapping(address => uint256) public monCoinBid;
     address CardOwner;
 
     event NewBid(uint256 _cardIndex, address _bidder, uint256 _bidAmount);
 
-    function bid(uint256 _cardIndex) public payable beforeEndTime {
+    function bid(uint256 _cardIndex, uint256 monCoins) public beforeEndTime {
         require(
-            monCoinBid[msg.sender] + msg.value >
+            monCoinBid[msg.sender] + monCoins >
                 auctionCards[_cardIndex].highestBid &&
-                users[msg.sender].monCoinBalance >= msg.value
+                users[msg.sender].monCoinBalance >= monCoins
         );
         auctionCards[_cardIndex].highestBidder = msg.sender;
-        auctionCards[_cardIndex].highestBid =
-            monCoinBid[msg.sender] +
-            msg.value;
-        monCoinBid[msg.sender] += msg.value;
+        auctionCards[_cardIndex].highestBid = monCoinBid[msg.sender] + monCoins;
+        monCoinBid[msg.sender] += monCoins;
 
-        emit NewBid(_cardIndex, msg.sender, msg.value);
+        emit NewBid(_cardIndex, msg.sender, monCoins);
     }
 
     function transferAuctionAmount(address _to, address _from) public {

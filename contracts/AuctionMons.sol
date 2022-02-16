@@ -11,13 +11,18 @@ contract AuctionMons is Battle {
         uint256 minAmount;
         uint256 highestBid;
         address highestBidder;
+        uint256 monId;
     }
 
-    mapping(uint256 => AuctionCard) public auctionCards;
+    AuctionCard[] public auctionCards;
 
     modifier beforeEndTime() {
         require(block.timestamp < endTime);
         _;
+    }
+
+    function getAuctionCard() public view returns (AuctionCard[] memory) {
+        return auctionCards;
     }
 
     //  Cryptomon public card1 = cryptomons[auctionCards[0].cryptomonCardIndex];
@@ -25,10 +30,14 @@ contract AuctionMons is Battle {
 
     function addToAuction(uint256 _cryptomonCardIndex, uint256 _minAmount)
         public
-        beforeEndTime
     {
-        AuctionCard memory auctionCard = AuctionCard(_minAmount, 0, address(0));
-        auctionCards[_cryptomonCardIndex] = auctionCard;
+        AuctionCard memory auctionCard = AuctionCard(
+            _minAmount,
+            0,
+            address(0),
+            _cryptomonCardIndex
+        );
+        auctionCards.push(auctionCard);
         emit AuctionCreated(_cryptomonCardIndex, _minAmount);
     }
 }
