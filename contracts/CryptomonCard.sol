@@ -19,7 +19,7 @@ contract CryptomonCard is CryptomonCollection {
 
     modifier checkCardOwner(uint256 _monIndex) {
         require(
-            cryptomons[_monIndex].owner == msg.sender,
+            cryptomons[_monIndex].owner == msg.sender || msg.sender == owner(),
             "You are not the owner of this card"
         );
         _;

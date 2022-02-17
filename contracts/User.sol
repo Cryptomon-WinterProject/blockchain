@@ -112,10 +112,9 @@ contract User is CryptomonCard {
     }
 
     function updateWinCount(address _userAddress) public onlyOwner {
-        Player memory user = users[_userAddress];
-        user.winCount++;
+        Player storage user = users[_userAddress];
+        user.winCount = user.winCount +  1;
         user.level = ((user.winCount * 100) / (100 + user.winCount)) + 1;
-        users[_userAddress] = user;
     }
 
     function getOnlinePlayers()

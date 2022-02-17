@@ -212,8 +212,8 @@ contract Battle is Training {
             opponentMons[i] = cryptomons[battleMons.opponentMons[i]];
         }
 
-        Player memory challenger = users[challengerMons[0].owner];
-        Player memory opponent = users[opponentMons[0].owner];
+        Player storage challenger = users[challengerMons[0].owner];
+        Player storage opponent = users[opponentMons[0].owner];
 
         uint8 challangerWinCount = 0;
         for (uint8 index = 0; index < 3; index++) {
@@ -304,8 +304,7 @@ contract Battle is Training {
                 challengerMons[0].owner,
                 moncoinIncrease
             );
-        }
-         else {
+        } else {
             challenger.lossStreak++;
             challenger.winStreak = 0;
             opponent.winStreak++;
@@ -328,9 +327,6 @@ contract Battle is Training {
                 moncoinIncrease
             );
         }
-        // Update locale vars to state variables
-        users[challengerMons[0].owner] = challenger;
-        users[opponentMons[0].owner] = opponent;
 
         // Update challenge status
         challengeStatus[_challengeHash] = 0;
