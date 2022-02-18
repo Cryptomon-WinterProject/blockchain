@@ -30,6 +30,7 @@ contract Auction is AuctionMons {
         );
         users[_to].monCoinBalance += monCoinBid[_from];
         users[_from].monCoinBalance -= monCoinBid[_from];
+
         monCoinBid[_from] = 0;
     }
 }

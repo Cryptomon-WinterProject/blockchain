@@ -107,13 +107,15 @@ contract User is CryptomonCard {
     }
 
     function buyMonCoins() public payable {
-        require(msg.value % 1000 == 0, "Amount must be in multiples of 1000");
-        users[msg.sender].monCoinBalance += msg.value / 1000;
+        require(msg.value >= 10**12, "Amount must be at least 1000 gwei");
+        users[msg.sender].monCoinBalance += msg.value / 10**12;
+        // return remaining balance to user
+        payable(msg.sender).transfer(msg.value % 10**12);
     }
 
     function updateWinCount(address _userAddress) public onlyOwner {
         Player storage user = users[_userAddress];
-        user.winCount = user.winCount +  1;
+        user.winCount = user.winCount + 1;
         user.level = ((user.winCount * 100) / (100 + user.winCount)) + 1;
     }
 
