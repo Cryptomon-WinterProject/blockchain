@@ -56,6 +56,7 @@ contract User is CryptomonCard {
         string memory _profilePictureUrl,
         uint256[5] memory randArr
     ) public {
+        require(users[msg.sender].verified == false, "User already exists!");
         Player memory user = Player({
             name: _name,
             profilePictureURL: _profilePictureUrl,
