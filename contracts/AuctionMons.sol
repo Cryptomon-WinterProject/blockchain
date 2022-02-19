@@ -12,6 +12,7 @@ contract AuctionMons is Battle {
         uint256 highestBid;
         address highestBidder;
         uint256 monId;
+        bool isSold;
     }
 
     AuctionCard[] public auctionCards;
@@ -25,7 +26,6 @@ contract AuctionMons is Battle {
         return auctionCards;
     }
 
-    //  Cryptomon public card1 = cryptomons[auctionCards[0].cryptomonCardIndex];
     event AuctionCreated(uint256 _cardIndex, uint256 _minAmount);
 
     function addToAuction(uint256 _cryptomonCardIndex, uint256 _minAmount)
@@ -35,9 +35,13 @@ contract AuctionMons is Battle {
             _minAmount,
             0,
             address(0),
-            _cryptomonCardIndex
+            _cryptomonCardIndex,
+            false
         );
         auctionCards.push(auctionCard);
+        cryptomons[_cryptomonCardIndex].readyTime = uint32(
+            block.timestamp + (60 * 60 * 24)
+        );
         emit AuctionCreated(_cryptomonCardIndex, _minAmount);
     }
 }
