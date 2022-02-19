@@ -112,7 +112,10 @@ contract Battle is Training {
         bytes32 challengeHash = keccak256(
             abi.encodePacked(msg.sender, _opponent)
         );
-
+        require(
+            challengeStatus[challengeHash] == 0,
+            "Challenge already exists"
+        );
         challengeStatus[challengeHash] = 1;
 
         BattlingMons memory mons = BattlingMons({
