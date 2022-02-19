@@ -53,11 +53,11 @@ contract CryptomonCard is CryptomonCollection {
             monCollections[cryptomons[_monId].monIndex].names.length
         );
         XP = XP + _XPToIncrease;
-        // uint16 rangeOfXP = 80 + uint16(cryptomons[_monId].monLevel) * 20;
         uint16 rangeOfXP = calcXPRange(uint16(cryptomons[_monId].monLevel));
-        if (XP >= rangeOfXP) {
+        while (XP >= rangeOfXP) {
             XP = XP - rangeOfXP;
             cryptomons[_monId].monLevel = cryptomons[_monId].monLevel + 1;
+            rangeOfXP = calcXPRange(uint16(cryptomons[_monId].monLevel));
             uint8 monLevel = cryptomons[_monId].monLevel;
 
             uint256 evolution = uint256(

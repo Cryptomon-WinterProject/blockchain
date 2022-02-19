@@ -7,7 +7,7 @@ contract("CryptomonCard", ([owner, alice]) => {
     contractInstance = await CryptomonCard.new({ from: alice });
   });
 
-  it("should create a cryptomon card", async () => {
+  xit("should create a cryptomon card", async () => {
     const { logs } = await contractInstance.createCryptomonCard(0, {
       from: alice,
     });
@@ -23,7 +23,7 @@ contract("CryptomonCard", ([owner, alice]) => {
     const names = ["pichu", "pikachu", "raichu"];
     const types = "hello";
     const photos = ["pichu", "pikachu", "raichu"];
-    const prices = [1, 2, 3];
+    const prices = 23;
     const trainingRate = 20;
     await contractInstance.createMonCollection(
       names,
@@ -44,16 +44,16 @@ contract("CryptomonCard", ([owner, alice]) => {
 
     let getMonCardById = await contractInstance.getCryptomonCard(0);
     assert.equal(getMonCardById.evolution, 1);
-    assert.equal(getMonCardById.monLevel, 9);
-    assert.equal(getMonCardById.XP, 100);
+    assert.equal(getMonCardById.monLevel, 1);
+    assert.equal(getMonCardById.XP, 0);
 
-    await contractInstance.increaseXP(0, 170, {
+    await contractInstance.increaseXP(0, 433, {
       from: alice,
     });
 
     getMonCardById = await contractInstance.getCryptomonCard(0);
-    assert.equal(getMonCardById.evolution, 2);
-    assert.equal(getMonCardById.monLevel, 10);
-    assert.equal(getMonCardById.XP, 10);
+    assert.equal(getMonCardById.evolution, 1);
+    assert.equal(getMonCardById.monLevel, 4);
+    assert.equal(getMonCardById.XP, 73);
   });
 });
