@@ -61,7 +61,7 @@ contract User is CryptomonCard {
             name: _name,
             profilePictureURL: _profilePictureUrl,
             verified: true,
-            availableForChallenge: false,
+            availableForChallenge: true,
             winCount: 0,
             lossCount: 0,
             level: 1,
