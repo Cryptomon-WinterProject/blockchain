@@ -49,7 +49,8 @@ contract Battle is Training {
     event AnnounceRoundWinner(
         bytes32 _challengeHash,
         address _winner,
-        uint16 _xpGained
+        uint16 _xpGained,
+        uint8 _roundNumber
     );
     event AnnounceWinner(
         bytes32 _challengeHash,
@@ -268,7 +269,8 @@ contract Battle is Training {
                 emit AnnounceRoundWinner(
                     _challengeHash,
                     challengerMons[0].owner,
-                    monWinXPIncrease
+                    monWinXPIncrease,
+                    index
                 );
             } else {
                 uint16 monWinXPIncrease = calculateMonWinXPIncrease(
@@ -278,7 +280,8 @@ contract Battle is Training {
                 emit AnnounceRoundWinner(
                     _challengeHash,
                     opponentMons[0].owner,
-                    monWinXPIncrease
+                    monWinXPIncrease,
+                    index
                 );
             }
         }

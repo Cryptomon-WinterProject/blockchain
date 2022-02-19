@@ -1,4 +1,4 @@
-export const address = "0x94A3a394285eeB22e977175D3B015F2248b66890";
+export const address = "0xEF847cdCaE46E7dfACfF1518929Af0543F9b58fB";
 
 export const abi = [
   {
@@ -46,6 +46,12 @@ export const abi = [
         internalType: "uint16",
         name: "_xpGained",
         type: "uint16",
+      },
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "_roundNumber",
+        type: "uint8",
       },
     ],
     name: "AnnounceRoundWinner",
@@ -294,10 +300,55 @@ export const abi = [
         name: "highestBidder",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "monId",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isSold",
+        type: "bool",
+      },
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_cardIndex",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "monCoins",
+        type: "uint256",
+      },
+    ],
+    name: "bid",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_id",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_price",
+        type: "uint256",
+      },
+    ],
+    name: "buyCryptomons",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
@@ -305,7 +356,6 @@ export const abi = [
     outputs: [],
     stateMutability: "payable",
     type: "function",
-    payable: true,
   },
   {
     inputs: [
@@ -343,7 +393,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -368,7 +417,6 @@ export const abi = [
     ],
     stateMutability: "pure",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -468,7 +516,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -513,7 +560,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -565,7 +611,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -585,7 +630,46 @@ export const abi = [
     ],
     stateMutability: "pure",
     type: "function",
-    constant: true,
+  },
+  {
+    inputs: [],
+    name: "getAuctionCard",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "minAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "highestBid",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "highestBidder",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "monId",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isSold",
+            type: "bool",
+          },
+        ],
+        internalType: "struct AuctionMons.AuctionCard[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
@@ -637,7 +721,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -684,7 +767,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -698,7 +780,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -730,7 +811,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -744,7 +824,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -758,7 +837,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -776,6 +854,30 @@ export const abi = [
     name: "increaseXP",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "monCoinBid",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -806,7 +908,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -820,11 +921,28 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
     name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_cardIndex",
+        type: "uint256",
+      },
+      {
+        internalType: "address[]",
+        name: "userAddresses",
+        type: "address[]",
+      },
+    ],
+    name: "settleAuction",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -950,7 +1068,6 @@ export const abi = [
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -1019,39 +1136,6 @@ export const abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-    constant: true,
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_cardIndex",
-        type: "uint256",
-      },
-    ],
-    name: "bid",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-    payable: true,
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_to",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_from",
-        type: "address",
-      },
-    ],
-    name: "transferAuctionAmount",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];
