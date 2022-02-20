@@ -37,16 +37,17 @@ contract Auction is AuctionMons {
         ) {
             return;
         }
-        users[cryptomons[auctionCard.monId].owner].monCoinBalance += auctionCard
-            .highestBid;
+        users[cryptomons[auctionCard.monId].owner].monCoinBalance =
+            users[cryptomons[auctionCard.monId].owner].monCoinBalance +
+            auctionCard.highestBid;
         cryptomons[auctionCard.monId].owner = auctionCard.highestBidder;
         auctionCards[_cardIndex].isSold = true;
 
         for (uint256 i = 0; i < userAddresses.length; i++) {
             if (userAddresses[i] != auctionCard.highestBidder) {
-                users[userAddresses[i]].monCoinBalance += monCoinBid[
-                    userAddresses[i]
-                ][_cardIndex];
+                users[userAddresses[i]].monCoinBalance =
+                    users[userAddresses[i]].monCoinBalance +
+                    monCoinBid[userAddresses[i]][_cardIndex];
             }
         }
     }
